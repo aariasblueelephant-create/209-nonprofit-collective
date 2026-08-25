@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apply to Join · 209 Nonprofit Collective</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="directory.html">Directory</a>
+        <a href="apply.html" class="active">Apply to Join</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container apply-grid">
+    <div>
+      <h2>Join the Collective</h2>
+      <p class="lead">We're building a vetted network of nonprofits serving San Joaquin County — starting in Mountain House (95391) and growing across the 209. Membership is intentionally selective so it stays trustworthy for the community, local businesses, and the city.</p>
+
+      <h3>Who can join</h3>
+      <ul>
+        <li>Registered 501(c)(3) nonprofits (or fiscally sponsored organizations) actively serving San Joaquin County.</li>
+        <li>Organizations doing real, ongoing work in the community — not just registered on paper.</li>
+        <li>Willingness to join a short personal vetting call before admission.</li>
+      </ul>
+
+      <h3>What members get</h3>
+      <ul>
+        <li>Shared event calendar so members don't overlap or compete for the same dates.</li>
+        <li>A collective voice when requesting things like facility access and city support.</li>
+        <li>Matching with local sponsors looking for a cause aligned with their values.</li>
+        <li>A public profile and announcement page on this site.</li>
+      </ul>
+
+      <p class="form-note">Prefer to just email us directly? Reach out to <a id="apply-email" href="#"></a> with your organization's details.</p>
+    </div>
+
+    <div>
+      <form id="apply-form" class="side-card">
+        <div class="form-field">
+          <label for="orgName">Organization name</label>
+          <input id="orgName" name="orgName" type="text" required />
+        </div>
+        <div class="form-field">
+          <label for="contactName">Your name</label>
+          <input id="contactName" name="contactName" type="text" required />
+        </div>
+        <div class="form-field">
+          <label for="contactEmail">Your email</label>
+          <input id="contactEmail" name="contactEmail" type="email" required />
+        </div>
+        <div class="form-field">
+          <label for="contactPhone">Phone (for the vetting call)</label>
+          <input id="contactPhone" name="contactPhone" type="tel" />
+        </div>
+        <div class="form-field">
+          <label for="website">Website</label>
+          <input id="website" name="website" type="url" placeholder="https://" />
+        </div>
+        <div class="form-field">
+          <label for="status501c3">501(c)(3) / fiscal sponsorship status</label>
+          <select id="status501c3" name="status501c3">
+            <option value="Registered 501(c)(3)">Registered 501(c)(3)</option>
+            <option value="Fiscally sponsored">Fiscally sponsored</option>
+            <option value="Application pending">Application pending</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="serviceArea">Service area / ZIP code</label>
+          <input id="serviceArea" name="serviceArea" type="text" placeholder="e.g. Mountain House, CA 95391" required />
+        </div>
+        <div class="form-field">
+          <label for="apply-category">Category</label>
+          <select id="apply-category" name="category"></select>
+        </div>
+        <div class="form-field">
+          <label for="mission">Mission / what you do</label>
+          <textarea id="mission" name="mission" required></textarea>
+        </div>
+        <div class="form-field">
+          <label for="reason">Why you want to join the collective</label>
+          <textarea id="reason" name="reason" required></textarea>
+        </div>
+        <button class="btn btn-gold" type="submit" style="width: 100%;">Send Application</button>
+        <p class="form-note">This opens your email client with your application pre-filled. We review every application on a personal call before adding you to the directory.</p>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>209 Nonprofit Collective — San Joaquin County, CA</div>
+      <div><a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/apply.js" defer></script>
+</body>
+</html>

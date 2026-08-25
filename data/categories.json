@@ -1,0 +1,13 @@
+[
+  { "id": "special-needs-disability", "label": "Special Needs & Disability Services" },
+  { "id": "education", "label": "Education" },
+  { "id": "youth-family", "label": "Youth & Family" },
+  { "id": "health-wellness", "label": "Health & Wellness" },
+  { "id": "housing-basic-needs", "label": "Housing & Basic Needs" },
+  { "id": "environment", "label": "Environment" },
+  { "id": "arts-culture", "label": "Arts & Culture" },
+  { "id": "veterans-military", "label": "Veterans & Military" },
+  { "id": "animal-welfare", "label": "Animal Welfare" },
+  { "id": "community-development", "label": "Community Development" },
+  { "id": "other", "label": "Other" }
+]

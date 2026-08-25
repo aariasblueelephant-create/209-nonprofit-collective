@@ -1,0 +1,12 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Aaria's Blue Elephant logo">
+  <circle cx="60" cy="60" r="60" fill="#eaf1fb"/>
+  <g fill="#3f6fb0">
+    <ellipse cx="55" cy="66" rx="30" ry="24"/>
+    <circle cx="80" cy="50" r="10"/>
+    <ellipse cx="30" cy="50" rx="9" ry="14" transform="rotate(-15 30 50)"/>
+    <path d="M78 62 q10 6 6 22 q-2 8 -10 6 q-4 -2 -2 -8 q4 -10 -2 -18 z"/>
+    <circle cx="45" cy="80" r="6"/>
+    <circle cx="65" cy="80" r="6"/>
+  </g>
+  <circle cx="83" cy="46" r="2.4" fill="#faf6ef"/>
+</svg>

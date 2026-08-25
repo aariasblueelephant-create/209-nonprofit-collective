@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organization · 209 Nonprofit Collective</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="directory.html">Directory</a>
+        <a href="apply.html">Apply to Join</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="error-state" class="container" hidden style="padding: 60px 24px;">
+    <p class="empty-state">We couldn't find that organization. <a href="directory.html">Back to the directory →</a></p>
+  </div>
+
+  <div id="org-content" hidden>
+    <header class="org-header">
+      <div class="container org-header-inner">
+        <div class="org-avatar" id="org-avatar"></div>
+        <div>
+          <div class="badge" id="org-badge"></div>
+          <h1 id="org-name"></h1>
+          <p id="org-tagline" style="color: var(--muted); margin: 0;"></p>
+          <div class="org-meta-row" id="org-meta-row"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container org-body">
+      <div>
+        <h3>About</h3>
+        <p id="org-description"></p>
+
+        <div style="margin-top: 32px;">
+          <h3>Announcements</h3>
+          <div class="announce-list" id="org-announcements"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-card" id="programs-card">
+          <h3>Programs</h3>
+          <ul class="program-list" id="program-list"></ul>
+        </div>
+        <div class="side-card">
+          <h3>Support this org</h3>
+          <p style="font-size: 0.9rem; color: var(--muted);">Interested sponsors can reach out directly, or apply to the collective to explore matching with a cause you believe in.</p>
+          <a class="btn btn-gold" href="apply.html" style="margin-top: 10px;">Apply to Join</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>209 Nonprofit Collective — San Joaquin County, CA</div>
+      <div><a href="apply.html">Apply to join</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/render.js" defer></script>
+  <script src="assets/js/org-page.js" defer></script>
+</body>
+</html>

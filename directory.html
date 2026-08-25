@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Directory · 209 Nonprofit Collective</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="directory.html" class="active">Directory</a>
+        <a href="apply.html">Apply to Join</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Member Directory</h2>
+      </div>
+      <p class="lead">Search and filter vetted nonprofits serving San Joaquin County.</p>
+      <div class="toolbar">
+        <input class="search-input" id="search-input" type="search" placeholder="Search by name, mission, or program…" />
+        <select class="category-select" id="category-select">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+      <div class="card-grid" id="card-grid">
+        <div class="empty-state">Loading organizations…</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>209 Nonprofit Collective — San Joaquin County, CA</div>
+      <div><a href="apply.html">Apply to join</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/render.js" defer></script>
+  <script src="assets/js/directory.js" defer></script>
+</body>
+</html>
