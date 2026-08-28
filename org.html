@@ -14,6 +14,7 @@
         <a href="index.html">Home</a>
         <a href="directory.html">Directory</a>
         <a href="apply.html">Apply to Join</a>
+        <a href="edit.html" id="nav-edit-link" class="nav-edit-btn">✎ Edit</a>
       </div>
     </div>
   </nav>
@@ -23,14 +24,21 @@
   </div>
 
   <div id="org-content" hidden>
+    <div id="org-local-notice" class="local-notice" hidden>
+      Showing your local preview of unsaved edits — only visible on this device. Finish the update on the
+      <a id="org-local-notice-link" href="#">edit page</a> to send it to us and make it live for everyone.
+    </div>
     <header class="org-header">
+      <div class="org-banner" id="org-banner"></div>
       <div class="container org-header-inner">
         <div class="org-avatar" id="org-avatar"></div>
-        <div>
-          <div class="badge" id="org-badge"></div>
-          <h1 id="org-name"></h1>
-          <p id="org-tagline" style="color: var(--muted); margin: 0;"></p>
-          <div class="org-meta-row" id="org-meta-row"></div>
+        <div class="badge" id="org-badge"></div>
+        <h1 id="org-name"></h1>
+        <p id="org-tagline" style="color: var(--muted); margin: 0;"></p>
+        <div class="org-meta-row" id="org-meta-row"></div>
+        <div class="org-actions">
+          <a class="btn btn-gold" id="org-donate" href="#" target="_blank" rel="noopener" hidden>Donate</a>
+          <div class="share-icons" id="org-share"></div>
         </div>
       </div>
     </header>
@@ -39,6 +47,11 @@
       <div>
         <h3>About</h3>
         <p id="org-description"></p>
+
+        <div style="margin-top: 32px;">
+          <h3>Upcoming Events</h3>
+          <div class="event-list" id="org-events"></div>
+        </div>
 
         <div style="margin-top: 32px;">
           <h3>Announcements</h3>
@@ -63,7 +76,7 @@
   <footer class="site-footer">
     <div class="container footer-row">
       <div>209 Nonprofit Collective — San Joaquin County, CA</div>
-      <div><a href="apply.html">Apply to join</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+      <div><a href="apply.html">Apply to join</a> · <a href="edit.html">Member: edit your org</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
     </div>
   </footer>
 

@@ -1,0 +1,181 @@
+// Cloudflare Worker: verifies a Google sign-in, checks the requester against
+// data/editors.json in the GitHub repo, and — only if both pass — commits the
+// edited org fields (and any new logo/banner) straight to GitHub via its
+// Contents API. This is the one piece of always-on infrastructure that lets
+// a verified member's edit go live without an admin manually applying it.
+//
+// Required config (see wrangler.toml):
+//   vars:    GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH, ALLOWED_ORIGIN
+//   secrets: GITHUB_TOKEN   (fine-grained PAT, scoped to this one repo, Contents: read/write)
+//            GOOGLE_CLIENT_ID (the OAuth Client ID from Google Cloud Console)
+
+const EDITABLE_FIELDS = [
+  "themeColor",
+  "categoryId",
+  "tagline",
+  "description",
+  "website",
+  "email",
+  "phone",
+  "ein",
+  "serviceArea",
+  "donateUrl",
+  "programs",
+];
+
+function corsHeaders(env) {
+  return {
+    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+function json(env, data, status) {
+  return new Response(JSON.stringify(data), {
+    status: status || 200,
+    headers: { "Content-Type": "application/json", ...corsHeaders(env) },
+  });
+}
+
+function utf8ToBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach((b) => { binary += String.fromCharCode(b); });
+  return btoa(binary);
+}
+
+function base64ToUtf8(b64) {
+  const binary = atob(b64.replace(/\n/g, ""));
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+async function githubApi(env, path, options) {
+  const url = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}`;
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "209-nonprofit-collective-editor",
+      ...(options && options.headers),
+    },
+  });
+  return res;
+}
+
+async function githubGetFile(env, path) {
+  const res = await githubApi(env, `${path}?ref=${env.GITHUB_BRANCH}`);
+  if (!res.ok) throw new Error(`Could not read ${path} from GitHub (${res.status})`);
+  const data = await res.json();
+  return { content: base64ToUtf8(data.content), sha: data.sha };
+}
+
+async function githubPutFile(env, path, base64Content, message, sha) {
+  const res = await githubApi(env, path, {
+    method: "PUT",
+    body: JSON.stringify({
+      message,
+      content: base64Content,
+      branch: env.GITHUB_BRANCH,
+      ...(sha ? { sha } : {}),
+    }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`GitHub write to ${path} failed (${res.status}): ${detail}`);
+  }
+  return res.json();
+}
+
+async function verifyGoogleIdToken(env, idToken) {
+  const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`);
+  if (!res.ok) throw new Error("Google could not verify that sign-in token.");
+  const info = await res.json();
+  if (info.aud !== env.GOOGLE_CLIENT_ID) throw new Error("Sign-in token was not issued for this site.");
+  if (info.email_verified !== "true" && info.email_verified !== true) throw new Error("Google email is not verified.");
+  return String(info.email || "").toLowerCase();
+}
+
+async function isAuthorizedEditor(env, email, slug) {
+  const { content } = await githubGetFile(env, "data/editors.json");
+  const editors = JSON.parse(content);
+  return editors.some((e) => String(e.email || "").toLowerCase() === email && e.slug === slug);
+}
+
+function dataUrlToBase64(dataUrl) {
+  const comma = dataUrl.indexOf(",");
+  return comma === -1 ? dataUrl : dataUrl.slice(comma + 1);
+}
+
+export default {
+  async fetch(request, env) {
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders(env) });
+    }
+    if (request.method !== "POST") {
+      return json(env, { ok: false, error: "Method not allowed" }, 405);
+    }
+
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return json(env, { ok: false, error: "Invalid request body" }, 400);
+    }
+
+    const { idToken, slug, fields, logo, banner } = body || {};
+    if (!idToken || !slug) {
+      return json(env, { ok: false, error: "Missing idToken or slug" }, 400);
+    }
+
+    let email;
+    try {
+      email = await verifyGoogleIdToken(env, idToken);
+    } catch (err) {
+      return json(env, { ok: false, error: err.message }, 401);
+    }
+
+    try {
+      const authorized = await isAuthorizedEditor(env, email, slug);
+      if (!authorized) {
+        return json(env, { ok: false, error: `${email} is not a listed editor for "${slug}".` }, 403);
+      }
+
+      const orgPath = `data/orgs/${slug}.json`;
+      const { content: orgRaw, sha: orgSha } = await githubGetFile(env, orgPath);
+      const org = JSON.parse(orgRaw);
+
+      if (fields && typeof fields === "object") {
+        for (const key of EDITABLE_FIELDS) {
+          if (Object.prototype.hasOwnProperty.call(fields, key)) org[key] = fields[key];
+        }
+      }
+
+      if (typeof logo === "string" && logo.startsWith("data:")) {
+        const ext = logo.startsWith("data:image/png") ? "png" : "jpg";
+        const logoPath = `assets/logos/${slug}.${ext}`;
+        let existingSha;
+        try { existingSha = (await githubGetFile(env, logoPath)).sha; } catch { /* file may not exist yet */ }
+        await githubPutFile(env, logoPath, dataUrlToBase64(logo), `Update ${org.name} logo via self-service edit (${email})`, existingSha);
+        org.logo = logoPath;
+      }
+
+      if (typeof banner === "string" && banner.startsWith("data:")) {
+        const bannerPath = `assets/logos/${slug}-banner.jpg`;
+        let existingSha;
+        try { existingSha = (await githubGetFile(env, bannerPath)).sha; } catch { /* file may not exist yet */ }
+        await githubPutFile(env, bannerPath, dataUrlToBase64(banner), `Update ${org.name} banner via self-service edit (${email})`, existingSha);
+        org.banner = bannerPath;
+      }
+
+      const newOrgContent = utf8ToBase64(JSON.stringify(org, null, 2) + "\n");
+      await githubPutFile(env, orgPath, newOrgContent, `Update ${org.name} via self-service edit (${email})`, orgSha);
+
+      return json(env, { ok: true });
+    } catch (err) {
+      return json(env, { ok: false, error: err.message || "Unexpected error" }, 500);
+    }
+  },
+};

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Your Organization · 209 Nonprofit Collective</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="container">
+      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="directory.html">Directory</a>
+        <a href="apply.html">Apply to Join</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container apply-grid">
+    <div>
+      <h2>Edit Your Organization</h2>
+      <p class="lead">Update your theme color, logo, banner, and profile text — category, tagline, description, contact info, EIN, location, donate link, and programs. Anyone can preview changes here, so please only edit your own organization.</p>
+      <p class="form-note"><strong>Verified editors publish instantly.</strong> Sign in with the Google account on file for your organization and, if it's recognized, your changes go live automatically — no email needed. Everyone else's changes still preview locally and go out as an email for us to apply.</p>
+
+      <div class="side-card" id="signin-card" style="margin-bottom: 24px;">
+        <h3 style="margin-top: 0;">Sign in to publish instantly</h3>
+        <div id="g_id_signin"></div>
+        <p class="field-hint" id="signin-status">Not signed in — changes will preview locally and go out by email.</p>
+        <p class="field-hint" id="signin-unconfigured" hidden>Google sign-in isn't configured on this deployment yet — you can still use the email flow below.</p>
+      </div>
+
+      <div class="edit-preview" id="edit-preview">
+        <div class="edit-preview-banner" id="preview-banner"></div>
+        <div class="edit-preview-row">
+          <div class="edit-preview-avatar" id="preview-avatar"></div>
+          <div>
+            <div class="badge" id="preview-badge">Category</div>
+            <div class="edit-preview-name" id="preview-name">Organization Name</div>
+            <div class="edit-preview-tagline" id="preview-tagline"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="form-note">This preview updates instantly and is saved to <strong>this browser only</strong>, so you can see how it will look. It is not yet visible to other visitors — saving also opens an email so we can apply the change to the live site for everyone.</p>
+      <p class="form-note">Prefer to just send us the files directly? Email <a id="edit-email" href="#"></a>.</p>
+    </div>
+
+    <div>
+      <form id="edit-form" class="side-card">
+        <div class="form-field">
+          <label for="edit-org">Your organization</label>
+          <select id="edit-org" name="org" required></select>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-category">Category</label>
+          <select id="edit-category" name="category"></select>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-tagline">Tagline</label>
+          <input id="edit-tagline" name="tagline" type="text" placeholder="One line describing your mission" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-description">Description</label>
+          <textarea id="edit-description" name="description" placeholder="A longer paragraph shown on your profile page"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-website">Website</label>
+          <input id="edit-website" name="website" type="url" placeholder="https://" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-org-email">Contact email</label>
+          <input id="edit-org-email" name="orgEmail" type="email" placeholder="contact@example.org" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-phone">Phone</label>
+          <input id="edit-phone" name="phone" type="tel" placeholder="(209) 555-0100" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-ein">EIN</label>
+          <p class="field-hint">Your IRS Employer Identification Number, e.g. "12-3456789". Shown publicly for donor/verification trust.</p>
+          <input id="edit-ein" name="ein" type="text" placeholder="12-3456789" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-location">Location</label>
+          <p class="field-hint">City &amp; ZIP only — please don't include a street address here, that stays private to the vetting call.</p>
+          <input id="edit-location" name="location" type="text" placeholder="Mountain House, CA 95391" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-donate">Donate link</label>
+          <input id="edit-donate" name="donateUrl" type="url" placeholder="https://" />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-programs">Programs</label>
+          <p class="field-hint">One per line.</p>
+          <textarea id="edit-programs" name="programs" placeholder="Program One&#10;Program Two"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-color">Theme color</label>
+          <div class="color-row">
+            <input id="edit-color" name="color" type="color" value="#22D3EE" />
+            <input id="edit-color-hex" type="text" value="#22D3EE" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" />
+          </div>
+          <div class="swatch-row" id="swatch-row"></div>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-logo">Logo</label>
+          <p class="field-hint">Square image works best — about 400×400px (1:1). PNG with a transparent background is ideal. Larger images are auto-resized; upload up to 10MB.</p>
+          <div class="file-row">
+            <div class="file-thumb round" id="logo-thumb">No logo</div>
+            <label class="btn btn-outline btn-sm" for="edit-logo">Choose image</label>
+            <input class="file-input" id="edit-logo" name="logo" type="file" accept="image/*" />
+          </div>
+          <a class="form-note" id="logo-download" href="#" download hidden>⬇ Download this logo file to attach to the email</a>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-banner">Banner photo</label>
+          <p class="field-hint">Wide photo works best — about 1200×400px (3:1 aspect ratio), like a good event photo. It'll be cropped to fit that shape. Larger images are auto-resized; upload up to 10MB.</p>
+          <div class="file-row">
+            <div class="file-thumb wide" id="banner-thumb">No banner</div>
+            <label class="btn btn-outline btn-sm" for="edit-banner">Choose image</label>
+            <input class="file-input" id="edit-banner" name="banner" type="file" accept="image/*" />
+          </div>
+          <a class="form-note" id="banner-download" href="#" download hidden>⬇ Download this banner file to attach to the email</a>
+        </div>
+
+        <button class="btn btn-gold" type="submit" id="submit-btn" style="width: 100%;">Save & Email Us</button>
+        <button class="btn btn-outline btn-sm" type="button" id="reset-btn" style="width: 100%; margin-top: 10px;">Reset local preview</button>
+        <div class="save-status" id="save-status"></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div>209 Nonprofit Collective — San Joaquin County, CA</div>
+      <div><a href="apply.html">Apply to join</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/render.js" defer></script>
+  <script src="assets/js/edit.js" defer></script>
+</body>
+</html>

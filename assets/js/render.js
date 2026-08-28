@@ -85,6 +85,62 @@ function createCard(org, categories) {
   return card;
 }
 
+function eventDateBadge(isoDate) {
+  const d = new Date(`${isoDate}T00:00:00`);
+  const badge = document.createElement("div");
+  badge.className = "event-date-badge";
+  if (Number.isNaN(d.getTime())) {
+    badge.textContent = "—";
+    return badge;
+  }
+  const day = document.createElement("div");
+  day.className = "event-date-day";
+  day.textContent = d.getDate();
+  const month = document.createElement("div");
+  month.className = "event-date-month";
+  month.textContent = d.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+  badge.appendChild(day);
+  badge.appendChild(month);
+  return badge;
+}
+
+function createEventItem(org, event, opts) {
+  const showOrg = !opts || opts.showOrg !== false;
+  const item = document.createElement("a");
+  item.className = "event-item";
+  item.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
+
+  item.appendChild(eventDateBadge(event.date));
+
+  const content = document.createElement("div");
+  content.className = "event-content";
+
+  const title = document.createElement("div");
+  title.className = "event-title";
+  title.textContent = event.title;
+  content.appendChild(title);
+
+  const metaParts = [];
+  if (showOrg) metaParts.push(org.name);
+  if (event.time) metaParts.push(event.time);
+  if (event.location) metaParts.push(event.location);
+
+  const meta = document.createElement("div");
+  meta.className = "event-meta";
+  meta.textContent = metaParts.join(" · ");
+  content.appendChild(meta);
+
+  if (event.description) {
+    const desc = document.createElement("div");
+    desc.className = "event-desc";
+    desc.textContent = event.description;
+    content.appendChild(desc);
+  }
+
+  item.appendChild(content);
+  return item;
+}
+
 function createAnnouncementItem(org, announcement) {
   const item = document.createElement("div");
   item.className = "announce-item";

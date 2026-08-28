@@ -23,20 +23,23 @@
       <h2>Join the Collective</h2>
       <p class="lead">We're building a vetted network of nonprofits serving San Joaquin County — starting in Mountain House (95391) and growing across the 209. Membership is intentionally selective so it stays trustworthy for the community, local businesses, and the city.</p>
 
-      <h3>Who can join</h3>
+      <h3>Who can join right now</h3>
       <ul>
-        <li>Registered 501(c)(3) nonprofits (or fiscally sponsored organizations) actively serving San Joaquin County.</li>
+        <li><strong>Physical address in ZIP 95391 (Mountain House) only, for now.</strong> We're starting narrow so we can test the site and vetting process properly — we plan to open registration to other San Joaquin County ZIP codes once that's done.</li>
+        <li><strong>Registered 501(c)(3) nonprofits only</strong> (or fiscally sponsored charitable projects).</li>
         <li>Organizations doing real, ongoing work in the community — not just registered on paper.</li>
         <li>Willingness to join a short personal vetting call before admission.</li>
       </ul>
 
       <h3>What members get</h3>
       <ul>
-        <li>Shared event calendar so members don't overlap or compete for the same dates.</li>
+        <li>A spot on the shared community calendar — list your own events any time, no separate approval needed once you're a member.</li>
         <li>A collective voice when requesting things like facility access and city support.</li>
         <li>Matching with local sponsors looking for a cause aligned with their values.</li>
-        <li>A public profile and announcement page on this site.</li>
+        <li>A public profile page with your logo, a banner photo, and your announcements.</li>
       </ul>
+
+      <p class="form-note">There's no automatic upload here — the site has no backend. During your vetting call, send us your logo and a banner photo (a good event photo works great) and we'll add them to your profile for you.</p>
 
       <p class="form-note">Prefer to just email us directly? Reach out to <a id="apply-email" href="#"></a> with your organization's details.</p>
     </div>
@@ -73,8 +76,12 @@
           </select>
         </div>
         <div class="form-field">
-          <label for="serviceArea">Service area / ZIP code</label>
-          <input id="serviceArea" name="serviceArea" type="text" placeholder="e.g. Mountain House, CA 95391" required />
+          <label for="physicalAddress">Physical street address</label>
+          <input id="physicalAddress" name="physicalAddress" type="text" placeholder="e.g. 123 Main St, Mountain House, CA" required />
+        </div>
+        <div class="form-field">
+          <label for="zip">ZIP code</label>
+          <input id="zip" name="zip" type="text" inputmode="numeric" pattern="95391" title="We're currently only accepting organizations physically located in 95391 (Mountain House). We'll open to other ZIP codes soon." placeholder="95391" required />
         </div>
         <div class="form-field">
           <label for="apply-category">Category</label>
@@ -97,7 +104,7 @@
   <footer class="site-footer">
     <div class="container footer-row">
       <div>209 Nonprofit Collective — San Joaquin County, CA</div>
-      <div><a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
+      <div><a href="edit.html">Member: edit your org</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
     </div>
   </footer>
 

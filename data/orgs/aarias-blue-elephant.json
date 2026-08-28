@@ -2,13 +2,18 @@
   "slug": "aarias-blue-elephant",
   "name": "Aaria's Blue Elephant",
   "categoryId": "special-needs-disability",
-  "logo": "assets/logos/aarias-blue-elephant.svg",
+  "logo": "assets/logos/aarias-blue-elephant.png",
   "tagline": "Building a more inclusive world for kids of all abilities.",
   "description": "Aaria's Blue Elephant is a 501(c)(3) nonprofit dedicated to inclusion for children with special needs across San Joaquin County. We organize adaptive events, social programs, and community resources so every kid gets the place they deserve.",
   "website": "https://aariasblueelephant.org",
   "email": "contact@aariasblueelephant.org",
+  "phone": "",
+  "ein": "",
   "serviceArea": "Mountain House, CA 95391",
   "joinedDate": "2026-08-25",
+  "banner": "",
+  "themeColor": "",
+  "donateUrl": "",
   "programs": [
     "Inclusive Easter Egg Hunt",
     "Circle of Friends",
@@ -16,6 +21,7 @@
     "First Responders Project",
     "Community Resource Fair"
   ],
+  "events": [],
   "announcements": [
     {
       "id": "founding-member",

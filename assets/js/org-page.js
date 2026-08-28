@@ -15,11 +15,55 @@
 
     document.title = `${org.name} · 209 Nonprofit Collective`;
 
+    if (org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor)) {
+      document.documentElement.style.setProperty("--org-accent", org.themeColor);
+    }
+
+    const editLink = `edit.html?slug=${encodeURIComponent(slug)}`;
+    document.getElementById("nav-edit-link").href = editLink;
+    if (org.hasLocalEdit) {
+      document.getElementById("org-local-notice-link").href = editLink;
+      document.getElementById("org-local-notice").hidden = false;
+    }
+
     fillAvatar(document.getElementById("org-avatar"), org);
     document.getElementById("org-name").textContent = org.name;
     document.getElementById("org-badge").textContent = categoryLabel(categories, org.categoryId);
     document.getElementById("org-tagline").textContent = org.tagline || "";
     document.getElementById("org-description").textContent = org.description || "";
+
+    const bannerEl = document.getElementById("org-banner");
+    if (org.banner) {
+      bannerEl.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = org.banner;
+      img.alt = `${org.name} banner photo`;
+      img.onerror = () => { bannerEl.innerHTML = ""; };
+      bannerEl.appendChild(img);
+    }
+
+    const donateLink = document.getElementById("org-donate");
+    if (org.donateUrl) {
+      donateLink.href = org.donateUrl;
+      donateLink.hidden = false;
+    }
+
+    const shareWrap = document.getElementById("org-share");
+    const pageUrl = window.location.href;
+    const fb = document.createElement("a");
+    fb.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+    fb.target = "_blank";
+    fb.rel = "noopener";
+    fb.title = "Share on Facebook";
+    fb.textContent = "f";
+    const x = document.createElement("a");
+    x.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(`Check out ${org.name} in the 209 Nonprofit Collective:`)}`;
+    x.target = "_blank";
+    x.rel = "noopener";
+    x.title = "Share on X";
+    x.textContent = "X";
+    shareWrap.appendChild(fb);
+    shareWrap.appendChild(x);
 
     const metaRow = document.getElementById("org-meta-row");
     metaRow.innerHTML = "";
@@ -42,6 +86,17 @@
       a.textContent = "Email";
       metaRow.appendChild(a);
     }
+    if (org.phone) {
+      const a = document.createElement("a");
+      a.href = `tel:${org.phone.replace(/[^\d+]/g, "")}`;
+      a.textContent = `📞 ${org.phone}`;
+      metaRow.appendChild(a);
+    }
+    if (org.ein) {
+      const span = document.createElement("span");
+      span.textContent = `EIN ${org.ein}`;
+      metaRow.appendChild(span);
+    }
     if (org.joinedDate) {
       const span = document.createElement("span");
       span.textContent = `Member since ${formatDate(org.joinedDate)}`;
@@ -56,6 +111,18 @@
       programList.appendChild(li);
     });
     document.getElementById("programs-card").hidden = (org.programs || []).length === 0;
+
+    const eventListEl = document.getElementById("org-events");
+    eventListEl.innerHTML = "";
+    const today = new Date().toISOString().slice(0, 10);
+    const upcoming = (org.events || [])
+      .filter((e) => e.date >= today)
+      .sort((a, b) => (a.date > b.date ? 1 : -1));
+    if (upcoming.length === 0) {
+      eventListEl.innerHTML = '<div class="empty-state">No upcoming events posted yet.</div>';
+    } else {
+      upcoming.forEach((e) => eventListEl.appendChild(createEventItem(org, e, { showOrg: false })));
+    }
 
     const announceList = document.getElementById("org-announcements");
     announceList.innerHTML = "";

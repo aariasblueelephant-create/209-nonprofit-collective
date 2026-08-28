@@ -1,0 +1,12 @@
+name = "collective-editor"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+[vars]
+GITHUB_OWNER = "aariasblueelephant-create"
+GITHUB_REPO = "209-nonprofit-collective"
+GITHUB_BRANCH = "main"
+ALLOWED_ORIGIN = "https://aariasblueelephant-create.github.io"
+# GOOGLE_CLIENT_ID and GITHUB_TOKEN are secrets — set them with:
+#   npx wrangler secret put GOOGLE_CLIENT_ID
+#   npx wrangler secret put GITHUB_TOKEN

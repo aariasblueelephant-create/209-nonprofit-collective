@@ -1,6 +1,7 @@
 (async function initHome() {
   const bubbleGrid = document.getElementById("member-bubbles");
   const announceList = document.getElementById("announcements-list");
+  const eventList = document.getElementById("events-list");
   const statMembers = document.getElementById("stat-members");
   const statCategories = document.getElementById("stat-categories");
 
@@ -33,8 +34,26 @@
         announceList.appendChild(createAnnouncementItem(org, announcement));
       });
     }
+
+    // Upcoming events
+    const today = new Date().toISOString().slice(0, 10);
+    const events = orgs
+      .flatMap((org) => (org.events || []).map((e) => ({ org, event: e })))
+      .filter(({ event }) => event.date >= today)
+      .sort((a, b) => (a.event.date > b.event.date ? 1 : -1));
+
+    eventList.innerHTML = "";
+    if (events.length === 0) {
+      eventList.innerHTML = '<div class="empty-state">No events scheduled yet. Member orgs can add their own to claim a spot on the shared calendar — see the README for how.</div>';
+    } else {
+      events.slice(0, 8).forEach(({ org, event }) => {
+        eventList.appendChild(createEventItem(org, event));
+      });
+    }
   } catch (err) {
     console.error(err);
-    bubbleGrid.innerHTML = '<div class="empty-state">Could not load member organizations. If you are viewing this file directly, run a local server (see README) so the browser can fetch the data files.</div>';
+    const msg = '<div class="empty-state">Could not load member organizations. If you are viewing this file directly, run a local server (see README) so the browser can fetch the data files.</div>';
+    bubbleGrid.innerHTML = msg;
+    eventList.innerHTML = msg;
   }
 })();
