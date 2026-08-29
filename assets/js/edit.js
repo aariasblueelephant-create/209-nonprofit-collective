@@ -2,6 +2,8 @@ const EDIT_EMAIL = "contact@aariasblueelephant.org";
 const DEFAULT_COLOR = "#22D3EE";
 const SWATCHES = ["#22D3EE", "#FBBF24", "#A78BFA", "#5EEAD4", "#FB7185", "#34D399", "#60A5FA", "#F472B6"];
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+const LOGO_TARGET_BYTES = 300 * 1024;
+const BANNER_TARGET_BYTES = 400 * 1024;
 // Fill these in once the Google OAuth client and Cloudflare Worker exist (see README).
 // Left blank, the page falls back to the local-preview + email flow for everyone.
 const GOOGLE_CLIENT_ID = "398008125353-778m6602c8jbo02pe6u2pjase5hduj28.apps.googleusercontent.com";
@@ -278,34 +280,63 @@ function decodeJwtPayload(token) {
     state.programs = programsInput.value.split("\n").map((p) => p.trim()).filter(Boolean);
   });
 
-  function resizeImageFile(file, maxDim, mime, quality) {
+  function loadImageFromFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = () => reject(reader.error);
       reader.onload = () => {
         const img = new Image();
         img.onerror = () => reject(new Error("Could not read that image file."));
-        img.onload = () => {
-          let { width, height } = img;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL(mime, quality));
-        };
+        img.onload = () => resolve(img);
         img.src = reader.result;
       };
       reader.readAsDataURL(file);
     });
+  }
+
+  function drawToDataUrl(img, dim, mime, quality) {
+    let { width, height } = img;
+    if (width > dim || height > dim) {
+      if (width > height) {
+        height = Math.round((height * dim) / width);
+        width = dim;
+      } else {
+        width = Math.round((width * dim) / height);
+        height = dim;
+      }
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL(mime, quality);
+  }
+
+  function dataUrlBytes(dataUrl) {
+    return Math.ceil((dataUrl.length - dataUrl.indexOf(",") - 1) * 0.75);
+  }
+
+  // Enforces a real ceiling on what actually gets stored in the repo — not
+  // just the raw upload — so member-uploaded images can never balloon the
+  // site's size. JPEG can shrink via quality; PNG (kept for logo transparency)
+  // can only shrink via dimensions, since canvas ignores PNG "quality".
+  async function compressImage(file, { maxDim, minDim, mime, targetBytes, canReduceQuality }) {
+    const img = await loadImageFromFile(file);
+    let dim = maxDim;
+    let quality = 0.85;
+    let dataUrl = drawToDataUrl(img, dim, mime, quality);
+
+    while (dataUrlBytes(dataUrl) > targetBytes) {
+      if (canReduceQuality && quality > 0.4) {
+        quality -= 0.15;
+      } else if (dim > minDim) {
+        dim = Math.round(dim * 0.8);
+      } else {
+        break;
+      }
+      dataUrl = drawToDataUrl(img, dim, mime, quality);
+    }
+    return { dataUrl, bytes: dataUrlBytes(dataUrl) };
   }
 
   logoInput.addEventListener("change", async () => {
@@ -317,7 +348,20 @@ function decodeJwtPayload(token) {
       return;
     }
     try {
-      state.pendingLogo = await resizeImageFile(file, 400, "image/png", 0.92);
+      const { dataUrl, bytes } = await compressImage(file, {
+        maxDim: 400,
+        minDim: 150,
+        mime: "image/png",
+        targetBytes: LOGO_TARGET_BYTES,
+        canReduceQuality: false,
+      });
+      if (bytes > LOGO_TARGET_BYTES * 1.5) {
+        setStatus(`That logo is too detailed to compress under ${Math.round(LOGO_TARGET_BYTES / 1024)}KB even at a smaller size — try a simpler image.`, false);
+        logoInput.value = "";
+        return;
+      }
+      state.pendingLogo = dataUrl;
+      setStatus(`Logo ready (${Math.round(bytes / 1024)}KB).`, false);
       renderPreview();
       renderThumbs();
     } catch (err) {
@@ -335,7 +379,15 @@ function decodeJwtPayload(token) {
       return;
     }
     try {
-      state.pendingBanner = await resizeImageFile(file, 1000, "image/jpeg", 0.82);
+      const { dataUrl, bytes } = await compressImage(file, {
+        maxDim: 1000,
+        minDim: 500,
+        mime: "image/jpeg",
+        targetBytes: BANNER_TARGET_BYTES,
+        canReduceQuality: true,
+      });
+      state.pendingBanner = dataUrl;
+      setStatus(`Banner ready (${Math.round(bytes / 1024)}KB).`, false);
       renderPreview();
       renderThumbs();
     } catch (err) {

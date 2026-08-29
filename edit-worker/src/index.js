@@ -23,6 +23,12 @@ const EDITABLE_FIELDS = [
   "programs",
 ];
 
+// The client already compresses images to well under these before sending —
+// this is a server-side backstop against a caller hitting the API directly,
+// so a single image can never blow up the repo regardless of what the
+// browser did or didn't enforce.
+const MAX_IMAGE_BYTES = 1.5 * 1024 * 1024;
+
 function corsHeaders(env) {
   return {
     "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
@@ -109,6 +115,11 @@ function dataUrlToBase64(dataUrl) {
   return comma === -1 ? dataUrl : dataUrl.slice(comma + 1);
 }
 
+function base64Bytes(base64) {
+  const clean = base64.replace(/=+$/, "");
+  return Math.ceil((clean.length * 3) / 4);
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
@@ -154,19 +165,27 @@ export default {
       }
 
       if (typeof logo === "string" && logo.startsWith("data:")) {
+        const logoBase64 = dataUrlToBase64(logo);
+        if (base64Bytes(logoBase64) > MAX_IMAGE_BYTES) {
+          return json(env, { ok: false, error: `Logo image is too large (over ${Math.round(MAX_IMAGE_BYTES / 1024)}KB after encoding).` }, 413);
+        }
         const ext = logo.startsWith("data:image/png") ? "png" : "jpg";
         const logoPath = `assets/logos/${slug}.${ext}`;
         let existingSha;
         try { existingSha = (await githubGetFile(env, logoPath)).sha; } catch { /* file may not exist yet */ }
-        await githubPutFile(env, logoPath, dataUrlToBase64(logo), `Update ${org.name} logo via self-service edit (${email})`, existingSha);
+        await githubPutFile(env, logoPath, logoBase64, `Update ${org.name} logo via self-service edit (${email})`, existingSha);
         org.logo = logoPath;
       }
 
       if (typeof banner === "string" && banner.startsWith("data:")) {
+        const bannerBase64 = dataUrlToBase64(banner);
+        if (base64Bytes(bannerBase64) > MAX_IMAGE_BYTES) {
+          return json(env, { ok: false, error: `Banner image is too large (over ${Math.round(MAX_IMAGE_BYTES / 1024)}KB after encoding).` }, 413);
+        }
         const bannerPath = `assets/logos/${slug}-banner.jpg`;
         let existingSha;
         try { existingSha = (await githubGetFile(env, bannerPath)).sha; } catch { /* file may not exist yet */ }
-        await githubPutFile(env, bannerPath, dataUrlToBase64(banner), `Update ${org.name} banner via self-service edit (${email})`, existingSha);
+        await githubPutFile(env, bannerPath, bannerBase64, `Update ${org.name} banner via self-service edit (${email})`, existingSha);
         org.banner = bannerPath;
       }
 
