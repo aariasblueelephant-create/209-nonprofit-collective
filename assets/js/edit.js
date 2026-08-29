@@ -4,7 +4,7 @@ const SWATCHES = ["#22D3EE", "#FBBF24", "#A78BFA", "#5EEAD4", "#FB7185", "#34D39
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 // Fill these in once the Google OAuth client and Cloudflare Worker exist (see README).
 // Left blank, the page falls back to the local-preview + email flow for everyone.
-const GOOGLE_CLIENT_ID = "";
+const GOOGLE_CLIENT_ID = "398008125353-778m6602c8jbo02pe6u2pjase5hduj28.apps.googleusercontent.com";
 const WORKER_URL = "";
 
 function decodeJwtPayload(token) {
