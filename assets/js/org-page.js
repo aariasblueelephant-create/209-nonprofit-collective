@@ -134,11 +134,11 @@
         supportActions.appendChild(a);
       }
     } else {
-      supportText.textContent = "Interested sponsors can reach out directly, or apply to the collective to explore matching with a cause you believe in.";
+      supportText.textContent = "Interested sponsors can reach out directly, or join the collective to explore matching with a cause you believe in.";
       const a = document.createElement("a");
       a.className = "btn btn-gold btn-sm";
       a.href = "apply.html";
-      a.textContent = "Apply to Join";
+      a.textContent = "Join the Collective";
       supportActions.appendChild(a);
     }
 
