@@ -24,6 +24,8 @@ function decodeJwtPayload(token) {
 (async function initEdit() {
   document.getElementById("edit-email").textContent = EDIT_EMAIL;
   document.getElementById("edit-email").href = `mailto:${EDIT_EMAIL}`;
+  document.getElementById("signin-email").textContent = EDIT_EMAIL;
+  document.getElementById("signin-email").href = `mailto:${EDIT_EMAIL}`;
 
   const params = new URLSearchParams(window.location.search);
   const initialSlug = params.get("slug");
