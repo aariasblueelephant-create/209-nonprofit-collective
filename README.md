@@ -65,6 +65,7 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
   "themeColor": "",                      // optional 6-digit hex (e.g. "#22D3EE"); primary accent for that org's own profile page; "" uses the site default cyan
   "themeColor2": "",                     // optional 6-digit hex; secondary/complementary accent used alongside themeColor; "" uses the site default gold. edit.html offers named presets (Fire, Water, Earth, Sky) that set both together
   "donateUrl": "",                       // optional; shows a Donate button on the org page if set
+  "supportUrl": "",                      // optional; a "get involved" link (volunteer sign-up, sponsorship page, wish list) shown in the "Support this org" box. If both this and donateUrl are empty, that box falls back to the default collective-level copy and an "Apply to Join" button
   "programs": ["Program One", "Program Two"],
   "events": [
     {

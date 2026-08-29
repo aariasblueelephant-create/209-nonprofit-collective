@@ -49,6 +49,7 @@ function decodeJwtPayload(token) {
   const einInput = document.getElementById("edit-ein");
   const locationInput = document.getElementById("edit-location");
   const donateInput = document.getElementById("edit-donate");
+  const supportInput = document.getElementById("edit-support");
   const programsInput = document.getElementById("edit-programs");
   const colorPicker = document.getElementById("edit-color");
   const colorHex = document.getElementById("edit-color-hex");
@@ -117,6 +118,7 @@ function decodeJwtPayload(token) {
     ein: "",
     serviceArea: "",
     donateUrl: "",
+    supportUrl: "",
     programs: [],
   };
 
@@ -245,6 +247,7 @@ function decodeJwtPayload(token) {
     state.ein = org.ein || "";
     state.serviceArea = org.serviceArea || "";
     state.donateUrl = org.donateUrl || "";
+    state.supportUrl = org.supportUrl || "";
     state.programs = org.programs || [];
 
     categorySelect.value = state.categoryId;
@@ -258,6 +261,7 @@ function decodeJwtPayload(token) {
     einInput.value = state.ein;
     locationInput.value = state.serviceArea;
     donateInput.value = state.donateUrl;
+    supportInput.value = state.supportUrl;
     programsInput.value = state.programs.join("\n");
 
     applyThemeVars();
@@ -336,6 +340,7 @@ function decodeJwtPayload(token) {
   einInput.addEventListener("input", () => { state.ein = einInput.value; });
   locationInput.addEventListener("input", () => { state.serviceArea = locationInput.value; });
   donateInput.addEventListener("input", () => { state.donateUrl = donateInput.value; });
+  supportInput.addEventListener("input", () => { state.supportUrl = supportInput.value; });
   programsInput.addEventListener("input", () => {
     state.programs = programsInput.value.split("\n").map((p) => p.trim()).filter(Boolean);
   });
@@ -491,6 +496,7 @@ function decodeJwtPayload(token) {
       ein: state.ein || undefined,
       serviceArea: state.serviceArea || undefined,
       donateUrl: state.donateUrl || undefined,
+      supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
     };
   }
@@ -544,6 +550,7 @@ function decodeJwtPayload(token) {
       ein: state.ein || undefined,
       serviceArea: state.serviceArea || undefined,
       donateUrl: state.donateUrl || undefined,
+      supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
     });
 
@@ -562,6 +569,7 @@ function decodeJwtPayload(token) {
       `EIN: ${state.ein}`,
       `Location (city & ZIP): ${state.serviceArea}`,
       `Donate link: ${state.donateUrl}`,
+      `Get involved link: ${state.supportUrl}`,
       `Programs:`,
       ...(state.programs.length ? state.programs.map((p) => `  - ${p}`) : ["  (none)"]),
       "",

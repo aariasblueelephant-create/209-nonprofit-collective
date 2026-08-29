@@ -924,6 +924,20 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 .side-card { padding: var(--s5); }
 .side-card + .side-card { margin-top: var(--s4); }
 .side-card p { color: var(--text-dim); }
+.support-actions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s2); margin-top: var(--s3); }
+.support-actions .btn { justify-content: center; width: 100%; }
+.support-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--org-accent);
+  transition: gap 0.3s var(--ease);
+}
+.support-contact:hover { gap: 11px; }
+
 .program-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s2); }
 .program-list li {
   display: flex;

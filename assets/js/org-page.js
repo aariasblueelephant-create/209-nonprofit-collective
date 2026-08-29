@@ -106,6 +106,50 @@
       metaRow.appendChild(span);
     }
 
+    // "Support this org" — driven by the org's own links when they've set
+    // them, otherwise falls back to the generic collective-level copy.
+    const supportText = document.getElementById("support-text");
+    const supportActions = document.getElementById("support-actions");
+    supportActions.innerHTML = "";
+    const hasOwnLinks = Boolean(org.supportUrl || org.donateUrl);
+
+    if (hasOwnLinks) {
+      supportText.textContent = `Back ${org.name} directly — every bit helps them keep this work going.`;
+      if (org.donateUrl) {
+        const a = document.createElement("a");
+        a.className = "btn btn-gold btn-sm";
+        a.href = org.donateUrl;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.innerHTML = `${iconSvg("heart", 16)} Donate`;
+        supportActions.appendChild(a);
+      }
+      if (org.supportUrl) {
+        const a = document.createElement("a");
+        a.className = org.donateUrl ? "btn btn-outline btn-sm" : "btn btn-gold btn-sm";
+        a.href = org.supportUrl;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.innerHTML = `${iconSvg("external", 16)} Get Involved`;
+        supportActions.appendChild(a);
+      }
+    } else {
+      supportText.textContent = "Interested sponsors can reach out directly, or apply to the collective to explore matching with a cause you believe in.";
+      const a = document.createElement("a");
+      a.className = "btn btn-gold btn-sm";
+      a.href = "apply.html";
+      a.textContent = "Apply to Join";
+      supportActions.appendChild(a);
+    }
+
+    if (org.email) {
+      const a = document.createElement("a");
+      a.className = "support-contact";
+      a.href = `mailto:${org.email}`;
+      a.innerHTML = `${iconSvg("mail", 15)} Contact ${org.name}`;
+      supportActions.appendChild(a);
+    }
+
     const programList = document.getElementById("program-list");
     programList.innerHTML = "";
     (org.programs || []).forEach((p) => {

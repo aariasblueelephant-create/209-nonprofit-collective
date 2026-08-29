@@ -22,6 +22,7 @@ const EDITABLE_FIELDS = [
   "ein",
   "serviceArea",
   "donateUrl",
+  "supportUrl",
   "programs",
 ];
 
