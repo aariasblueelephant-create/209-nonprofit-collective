@@ -614,49 +614,43 @@ img { max-width: 100%; display: block; }
 .form-note { font-size: 0.82rem; color: var(--muted); margin-top: 16px; }
 .field-hint { font-size: 0.8rem; color: var(--muted); margin: 2px 0 8px; }
 
-/* Edit page */
+/* Edit page — reuses the real .org-header/.org-banner/.org-avatar/.badge
+   rules (driven by --org-accent) so this is a faithful, live miniature of
+   the actual profile page rather than a separate approximation. */
 .edit-preview {
   border: 1px solid var(--panel-border);
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--panel-solid);
   margin-bottom: 24px;
 }
-.edit-preview-banner {
-  width: 100%;
-  aspect-ratio: 3 / 1;
-  background: linear-gradient(135deg, #14213A 0%, #1B1030 50%, #0E1B22 100%);
-  position: relative;
-  overflow: hidden;
-}
-.edit-preview-banner::before {
-  content: "";
+.edit-preview .org-header-inner { padding: 0 20px 24px; }
+.edit-preview-name { font-weight: 700; margin-top: 6px; }
+.edit-preview-tagline { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+
+.edit-preview .org-banner,
+.edit-preview .org-avatar { cursor: pointer; position: relative; }
+
+.edit-preview .org-banner::after,
+.edit-preview .org-avatar::after {
+  content: "✎ Click to change";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 30%, rgba(34,211,238,0.35), transparent 55%),
-              radial-gradient(circle at 80% 70%, rgba(167,139,250,0.35), transparent 55%);
-}
-.edit-preview-banner img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
-.edit-preview-row { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
-.edit-preview-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--panel-solid);
-  border: 3px solid var(--bg-alt);
-  overflow: hidden;
-  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--preview-accent, var(--cyan)) 35%, transparent),
-              0 0 18px color-mix(in srgb, var(--preview-accent, var(--cyan)) 30%, transparent);
+  text-align: center;
+  padding: 0 8px;
+  background: rgba(6, 9, 16, 0.6);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
 }
-.edit-preview-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.edit-preview-avatar .initials { font-weight: 800; color: var(--preview-accent, var(--cyan)); }
-.edit-preview .badge { color: var(--preview-accent, var(--cyan)); background: color-mix(in srgb, var(--preview-accent, var(--cyan)) 12%, transparent); border-color: color-mix(in srgb, var(--preview-accent, var(--cyan)) 30%, transparent); }
-.edit-preview-name { font-weight: 700; margin-top: 6px; }
-.edit-preview-tagline { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.edit-preview .org-avatar::after { content: "✎"; font-size: 1.2rem; border-radius: 50%; }
+.edit-preview .org-banner:hover::after,
+.edit-preview .org-avatar:hover::after { opacity: 1; }
 
 .color-row { display: flex; align-items: center; gap: 10px; }
 .color-row input[type="color"] {
@@ -696,7 +690,10 @@ img { max-width: 100%; display: block; }
   color: var(--muted);
   font-size: 0.68rem;
   text-align: center;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
 }
+.file-thumb:hover { border-color: var(--cyan); }
 .file-thumb.round { border-radius: 50%; }
 .file-thumb.wide { width: 96px; height: 32px; }
 .file-thumb img { width: 100%; height: 100%; object-fit: cover; }

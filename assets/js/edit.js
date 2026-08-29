@@ -52,7 +52,6 @@ function decodeJwtPayload(token) {
   const status = document.getElementById("save-status");
   const resetBtn = document.getElementById("reset-btn");
 
-  const previewWrap = document.getElementById("edit-preview");
   const previewBanner = document.getElementById("preview-banner");
   const previewAvatar = document.getElementById("preview-avatar");
   const previewBadge = document.getElementById("preview-badge");
@@ -121,7 +120,7 @@ function decodeJwtPayload(token) {
     state.themeColor = hex;
     colorPicker.value = hex;
     colorHex.value = hex;
-    previewWrap.style.setProperty("--preview-accent", hex);
+    document.documentElement.style.setProperty("--org-accent", hex);
     [...swatchRow.children].forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.color.toLowerCase() === hex.toLowerCase());
     });
@@ -266,6 +265,13 @@ function decodeJwtPayload(token) {
 
   colorPicker.addEventListener("input", () => setColor(colorPicker.value));
   colorHex.addEventListener("change", () => setColor(colorHex.value.trim()));
+
+  // Clicking the logo/banner directly (in the live preview or the small
+  // thumbnail) opens the file picker, same as the "Choose image" button.
+  previewAvatar.addEventListener("click", () => logoInput.click());
+  previewBanner.addEventListener("click", () => bannerInput.click());
+  logoThumb.addEventListener("click", () => logoInput.click());
+  bannerThumb.addEventListener("click", () => bannerInput.click());
 
   categorySelect.addEventListener("change", () => { state.categoryId = categorySelect.value; renderPreview(); });
   taglineInput.addEventListener("input", () => { state.tagline = taglineInput.value; renderPreview(); });
