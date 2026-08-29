@@ -73,7 +73,8 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
       "date": "2026-09-12",              // YYYY-MM-DD
       "time": "10:00 AM - 1:00 PM",      // optional, free text
       "location": "Mountain House Community Park", // optional
-      "description": "Short description shown under the event."
+      "description": "Short description shown under the event.",
+      "image": ""                         // optional path to a flyer/event photo; shown as a small thumbnail if set, otherwise just the date badge shows
     }
   ],
   "announcements": [

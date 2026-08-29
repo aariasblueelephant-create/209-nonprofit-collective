@@ -112,6 +112,17 @@ function createEventItem(org, event, opts) {
 
   item.appendChild(eventDateBadge(event.date));
 
+  if (event.image) {
+    const thumb = document.createElement("div");
+    thumb.className = "event-thumb";
+    const img = document.createElement("img");
+    img.src = event.image;
+    img.alt = "";
+    img.onerror = () => thumb.remove();
+    thumb.appendChild(img);
+    item.appendChild(thumb);
+  }
+
   const content = document.createElement("div");
   content.className = "event-content";
 

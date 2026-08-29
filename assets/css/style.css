@@ -202,8 +202,33 @@ img { max-width: 100%; display: block; }
 }
 .btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
 
-.hero-art { align-self: end; }
-.hero-art img { width: 100%; height: auto; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+.hero-art { align-self: end; position: relative; }
+.hero-art img { width: 100%; height: auto; border-radius: var(--radius); filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+
+/* Floating orbs drifting over the hero photo — occasionally one reveals a
+   real member's logo before fading back to a plain glowing dot. */
+.hero-orbs { position: absolute; inset: 0; overflow: hidden; border-radius: var(--radius); pointer-events: none; }
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  animation: hero-orb-float ease-in-out infinite;
+}
+.hero-orb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0;
+  filter: none;
+  transition: opacity 0.6s ease;
+  background: var(--panel-solid);
+}
+.hero-orb.showing-logo img { opacity: 1; }
+.hero-orb.showing-logo { box-shadow: 0 0 0 2px rgba(255,255,255,0.85), 0 0 22px rgba(255,255,255,0.5); }
+@keyframes hero-orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(var(--drift-x, 20px), var(--drift-y, -20px)) scale(1.06); }
+}
 
 /* Stats */
 .stats {
@@ -539,6 +564,9 @@ img { max-width: 100%; display: block; }
 
 .event-date-day { font-size: 1.2rem; font-weight: 800; }
 .event-date-month { font-size: 0.68rem; letter-spacing: 0.06em; color: #04121A; opacity: 0.75; }
+
+.event-thumb { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+.event-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
 .event-title { font-weight: 700; }
 .event-meta { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }

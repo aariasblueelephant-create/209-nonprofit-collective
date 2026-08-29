@@ -1,3 +1,49 @@
+function initHeroOrbs(orgs) {
+  const wrap = document.getElementById("hero-orbs");
+  if (!wrap) return;
+  const palette = ["#22D3EE", "#FBBF24", "#A78BFA", "#F97316", "#0EA5E9", "#84CC16", "#38BDF8"];
+  const ORB_COUNT = 9;
+
+  const orbs = Array.from({ length: ORB_COUNT }, (_, i) => {
+    const orb = document.createElement("div");
+    orb.className = "hero-orb";
+    const size = 12 + Math.round(Math.random() * 20);
+    const color = palette[i % palette.length];
+    orb.style.width = `${size}px`;
+    orb.style.height = `${size}px`;
+    orb.style.left = `${5 + Math.random() * 82}%`;
+    orb.style.top = `${6 + Math.random() * 72}%`;
+    orb.style.setProperty("--drift-x", `${Math.round((Math.random() - 0.5) * 70)}px`);
+    orb.style.setProperty("--drift-y", `${Math.round((Math.random() - 0.5) * 70)}px`);
+    orb.style.animationDuration = `${9 + Math.random() * 7}s`;
+    orb.style.animationDelay = `${(Math.random() * -8).toFixed(2)}s`;
+    orb.style.background = `radial-gradient(circle, ${color}, transparent 70%)`;
+    orb.style.boxShadow = `0 0 ${Math.round(size * 0.9)}px ${color}`;
+
+    const img = document.createElement("img");
+    img.alt = "";
+    orb.appendChild(img);
+    wrap.appendChild(orb);
+    return orb;
+  });
+
+  const withLogo = orgs.filter((o) => o.logo);
+  if (withLogo.length === 0) return;
+
+  function revealRandomLogo() {
+    const orb = orbs[Math.floor(Math.random() * orbs.length)];
+    const org = withLogo[Math.floor(Math.random() * withLogo.length)];
+    const img = orb.querySelector("img");
+    img.src = org.logo;
+    img.title = org.name;
+    orb.classList.add("showing-logo");
+    setTimeout(() => orb.classList.remove("showing-logo"), 3200);
+  }
+
+  revealRandomLogo();
+  setInterval(revealRandomLogo, 2200);
+}
+
 function initJoinedTicker(orgs) {
   const ticker = document.getElementById("joined-ticker");
   const track = document.getElementById("joined-ticker-track");
@@ -116,6 +162,7 @@ function initSpotlight(categories, orgs) {
   try {
     const [categories, orgs] = await Promise.all([loadCategories(), loadAllOrgs()]);
 
+    initHeroOrbs(orgs);
     initJoinedTicker(orgs);
     initSpotlight(categories, orgs);
 
