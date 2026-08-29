@@ -1,1 +1,3 @@
 .DS_Store
+edit-worker/.wrangler/
+edit-worker/node_modules/
