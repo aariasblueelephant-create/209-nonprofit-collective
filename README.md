@@ -33,13 +33,14 @@ When either policy changes, update the copy in `apply.html` and, for the ZIP res
 
 ## Adding a new organization (after vetting)
 
-1. **Logo (optional).** Add a square logo to `assets/logos/<slug>.svg` (or `.png`). If you skip this, the site automatically shows a circular initials badge instead — you don't have to supply a logo to onboard an org.
-2. **Banner (optional).** Add a wide photo (roughly 3:1, e.g. an event photo) to `assets/logos/<slug>-banner.jpg` or wherever you like, and reference it in the org's `banner` field. If left empty, the profile page shows a navy/sage gradient instead — no banner is required either.
-3. **Org record.** Copy `data/orgs/aarias-blue-elephant.json` to `data/orgs/<slug>.json` and fill in the fields (see schema below).
-4. **Manifest.** Add `"<slug>"` to the array in `data/manifest.json`.
-5. **Commit and push.** The org now appears automatically in the directory, the homepage member bubbles, and — if it has announcements or upcoming events — the homepage feeds for those too.
+The initial record still has to be created by an admin — that's the vetting gate, not a technical limitation — but logo/banner no longer have to be collected upfront if the Worker (below) is deployed; the org can upload their own afterward.
 
-Logos and banners aren't uploaded through the website (there's no backend to receive files) — collect them from the org directly (email attachment, or brought to the vetting call) and add the files yourself as part of onboarding.
+1. **Org record.** Copy `data/orgs/aarias-blue-elephant.json` to `data/orgs/<slug>.json` and fill in the fields (see schema below). It's fine to leave `logo` and `banner` blank — the site shows a circular initials badge and a gradient placeholder respectively until they're set.
+2. **Manifest.** Add `"<slug>"` to the array in `data/manifest.json`.
+3. **Editor access.** Add `{ "email": "<their Google email>", "slug": "<slug>" }` to `data/editors.json` so they can sign in and publish changes themselves (see "Verified live publishing" below).
+4. **Commit and push.** The org now appears automatically in the directory, the homepage member bubbles, and — if it has announcements or upcoming events — the homepage feeds for those too.
+
+If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.json`, they can still email you a logo/banner (or bring it to the vetting call) and you add the files to `assets/logos/<slug>.{svg,png}` / `assets/logos/<slug>-banner.jpg` by hand — same fallback as any other field edit.
 
 `<slug>` should be a lowercase, hyphenated version of the org name (e.g. `aarias-blue-elephant`) and must match the JSON filename and the value in `manifest.json`.
 
