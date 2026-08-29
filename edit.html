@@ -61,6 +61,11 @@
           <select id="edit-category" name="category"></select>
         </div>
 
+        <div class="form-field" id="category-other-field" hidden>
+          <label for="edit-category-other">Describe your category</label>
+          <input id="edit-category-other" name="categoryOther" type="text" maxlength="40" placeholder="e.g. Youth Mentorship" />
+        </div>
+
         <div class="form-field">
           <label for="edit-tagline">Tagline</label>
           <input id="edit-tagline" name="tagline" type="text" placeholder="One line describing your mission" />
@@ -110,12 +115,14 @@
         </div>
 
         <div class="form-field">
-          <label for="edit-color">Theme color</label>
+          <label>Theme</label>
+          <p class="field-hint">Picks a coordinated two-color wash for the whole profile page — banner, badge, buttons, everything.</p>
+          <div class="theme-grid" id="theme-grid"></div>
+          <p class="field-hint" style="margin-top: 14px;">Or fine-tune the primary color:</p>
           <div class="color-row">
             <input id="edit-color" name="color" type="color" value="#22D3EE" />
             <input id="edit-color-hex" type="text" value="#22D3EE" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" />
           </div>
-          <div class="swatch-row" id="swatch-row"></div>
         </div>
 
         <div class="form-field">

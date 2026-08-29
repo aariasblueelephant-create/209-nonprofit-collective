@@ -1,6 +1,13 @@
 const EDIT_EMAIL = "contact@aariasblueelephant.org";
 const DEFAULT_COLOR = "#22D3EE";
-const SWATCHES = ["#22D3EE", "#FBBF24", "#A78BFA", "#5EEAD4", "#FB7185", "#34D399", "#60A5FA", "#F472B6"];
+const DEFAULT_COLOR2 = "#FBBF24";
+const THEMES = [
+  { id: "default", label: "Default", icon: "✨", accent: "#22D3EE", accent2: "#FBBF24" },
+  { id: "fire", label: "Fire", icon: "🔥", accent: "#F97316", accent2: "#DC2626" },
+  { id: "water", label: "Water", icon: "🌊", accent: "#0EA5E9", accent2: "#06B6D4" },
+  { id: "earth", label: "Earth", icon: "🌍", accent: "#84CC16", accent2: "#A16207" },
+  { id: "sky", label: "Sky", icon: "☁️", accent: "#38BDF8", accent2: "#C4B5FD" },
+];
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const LOGO_TARGET_BYTES = 300 * 1024;
 const BANNER_TARGET_BYTES = 400 * 1024;
@@ -32,6 +39,8 @@ function decodeJwtPayload(token) {
 
   const orgSelect = document.getElementById("edit-org");
   const categorySelect = document.getElementById("edit-category");
+  const categoryOtherField = document.getElementById("category-other-field");
+  const categoryOtherInput = document.getElementById("edit-category-other");
   const taglineInput = document.getElementById("edit-tagline");
   const descriptionInput = document.getElementById("edit-description");
   const websiteInput = document.getElementById("edit-website");
@@ -43,7 +52,7 @@ function decodeJwtPayload(token) {
   const programsInput = document.getElementById("edit-programs");
   const colorPicker = document.getElementById("edit-color");
   const colorHex = document.getElementById("edit-color-hex");
-  const swatchRow = document.getElementById("swatch-row");
+  const themeGrid = document.getElementById("theme-grid");
   const logoInput = document.getElementById("edit-logo");
   const bannerInput = document.getElementById("edit-banner");
   const logoThumb = document.getElementById("logo-thumb");
@@ -93,11 +102,13 @@ function decodeJwtPayload(token) {
   // that are already live.
   const state = {
     themeColor: DEFAULT_COLOR,
+    themeColor2: DEFAULT_COLOR2,
     currentLogo: null,
     currentBanner: null,
     pendingLogo: null,
     pendingBanner: null,
     categoryId: "",
+    categoryOther: "",
     tagline: "",
     description: "",
     website: "",
@@ -117,20 +128,37 @@ function decodeJwtPayload(token) {
     status.className = isSuccess ? "save-status success" : "save-status";
   }
 
-  function setColor(hex) {
-    if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
-    state.themeColor = hex;
-    colorPicker.value = hex;
-    colorHex.value = hex;
-    document.documentElement.style.setProperty("--org-accent", hex);
-    [...swatchRow.children].forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.color.toLowerCase() === hex.toLowerCase());
+  function setActiveThemeCard() {
+    [...themeGrid.children].forEach((btn) => {
+      const theme = THEMES.find((t) => t.id === btn.dataset.themeId);
+      const matches = theme
+        && theme.accent.toLowerCase() === state.themeColor.toLowerCase()
+        && theme.accent2.toLowerCase() === state.themeColor2.toLowerCase();
+      btn.classList.toggle("active", matches);
     });
+  }
+
+  function applyThemeVars() {
+    document.documentElement.style.setProperty("--org-accent", state.themeColor);
+    document.documentElement.style.setProperty("--org-accent-2", state.themeColor2);
+    colorPicker.value = state.themeColor;
+    colorHex.value = state.themeColor;
+    setActiveThemeCard();
+  }
+
+  // Picking a named theme sets both colors as a coordinated pair. Typing a
+  // custom hex only fine-tunes the primary color — the secondary stays
+  // whatever it was, which is how a preset naturally becomes "custom".
+  function setTheme(accent, accent2) {
+    if (!/^#[0-9A-Fa-f]{6}$/.test(accent)) return;
+    state.themeColor = accent;
+    if (accent2 && /^#[0-9A-Fa-f]{6}$/.test(accent2)) state.themeColor2 = accent2;
+    applyThemeVars();
   }
 
   function renderPreview() {
     previewName.textContent = current ? current.name : "Organization Name";
-    previewBadge.textContent = categoryLabel(categories, state.categoryId);
+    previewBadge.textContent = orgCategoryLabel(categories, state.categoryId, state.categoryOther);
     previewTagline.textContent = state.tagline || "";
 
     previewBanner.innerHTML = "";
@@ -188,6 +216,7 @@ function decodeJwtPayload(token) {
   function loadOrgIntoForm(org) {
     current = org;
     state.themeColor = org.themeColor && /^#[0-9A-Fa-f]{6}$/.test(org.themeColor) ? org.themeColor : DEFAULT_COLOR;
+    state.themeColor2 = org.themeColor2 && /^#[0-9A-Fa-f]{6}$/.test(org.themeColor2) ? org.themeColor2 : DEFAULT_COLOR2;
     state.currentLogo = org.logo || null;
     state.currentBanner = org.banner || null;
     // If a local preview from an earlier visit is still the source of the
@@ -196,6 +225,7 @@ function decodeJwtPayload(token) {
     state.pendingBanner = org.hasLocalEdit && state.currentBanner && state.currentBanner.startsWith("data:") ? state.currentBanner : null;
 
     state.categoryId = org.categoryId || "";
+    state.categoryOther = org.categoryOther || "";
     state.tagline = org.tagline || "";
     state.description = org.description || "";
     state.website = org.website || "";
@@ -207,6 +237,8 @@ function decodeJwtPayload(token) {
     state.programs = org.programs || [];
 
     categorySelect.value = state.categoryId;
+    categoryOtherInput.value = state.categoryOther;
+    categoryOtherField.hidden = state.categoryId !== "other";
     taglineInput.value = state.tagline;
     descriptionInput.value = state.description;
     websiteInput.value = state.website;
@@ -217,7 +249,7 @@ function decodeJwtPayload(token) {
     donateInput.value = state.donateUrl;
     programsInput.value = state.programs.join("\n");
 
-    setColor(state.themeColor);
+    applyThemeVars();
     renderPreview();
     renderThumbs();
     updateSigninUI();
@@ -253,20 +285,25 @@ function decodeJwtPayload(token) {
   }
   initGoogleSignIn();
 
-  swatchRow.innerHTML = "";
-  SWATCHES.forEach((hex) => {
+  themeGrid.innerHTML = "";
+  THEMES.forEach((theme) => {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "swatch";
-    btn.style.background = hex;
-    btn.dataset.color = hex;
-    btn.title = hex;
-    btn.addEventListener("click", () => setColor(hex));
-    swatchRow.appendChild(btn);
+    btn.className = "theme-preset";
+    btn.dataset.themeId = theme.id;
+    btn.title = theme.label;
+    btn.innerHTML = `<span class="theme-preset-swatch" style="background: linear-gradient(135deg, ${theme.accent}, ${theme.accent2})">${theme.icon}</span><span>${theme.label}</span>`;
+    btn.addEventListener("click", () => setTheme(theme.accent, theme.accent2));
+    themeGrid.appendChild(btn);
   });
 
-  colorPicker.addEventListener("input", () => setColor(colorPicker.value));
-  colorHex.addEventListener("change", () => setColor(colorHex.value.trim()));
+  colorPicker.addEventListener("input", () => setTheme(colorPicker.value));
+  colorHex.addEventListener("change", () => setTheme(colorHex.value.trim()));
+
+  categoryOtherInput.addEventListener("input", () => {
+    state.categoryOther = categoryOtherInput.value;
+    renderPreview();
+  });
 
   // Clicking the logo/banner directly (in the live preview or the small
   // thumbnail) opens the file picker, same as the "Choose image" button.
@@ -275,7 +312,11 @@ function decodeJwtPayload(token) {
   logoThumb.addEventListener("click", () => logoInput.click());
   bannerThumb.addEventListener("click", () => bannerInput.click());
 
-  categorySelect.addEventListener("change", () => { state.categoryId = categorySelect.value; renderPreview(); });
+  categorySelect.addEventListener("change", () => {
+    state.categoryId = categorySelect.value;
+    categoryOtherField.hidden = state.categoryId !== "other";
+    renderPreview();
+  });
   taglineInput.addEventListener("input", () => { state.tagline = taglineInput.value; renderPreview(); });
   descriptionInput.addEventListener("input", () => { state.description = descriptionInput.value; });
   websiteInput.addEventListener("input", () => { state.website = websiteInput.value; });
@@ -428,7 +469,9 @@ function decodeJwtPayload(token) {
   function currentFields() {
     return {
       themeColor: state.themeColor,
+      themeColor2: state.themeColor2,
       categoryId: state.categoryId || undefined,
+      categoryOther: state.categoryId === "other" ? state.categoryOther || undefined : undefined,
       tagline: state.tagline || undefined,
       description: state.description || undefined,
       website: state.website || undefined,
@@ -477,9 +520,11 @@ function decodeJwtPayload(token) {
 
     setLocalOverride(current.slug, {
       themeColor: state.themeColor,
+      themeColor2: state.themeColor2,
       logo: state.pendingLogo || undefined,
       banner: state.pendingBanner || undefined,
       categoryId: state.categoryId || undefined,
+      categoryOther: state.categoryId === "other" ? state.categoryOther || undefined : undefined,
       tagline: state.tagline || undefined,
       description: state.description || undefined,
       website: state.website || undefined,
@@ -497,7 +542,7 @@ function decodeJwtPayload(token) {
     const bodyLines = [
       `Organization: ${current.name} (${current.slug})`,
       "",
-      `Category: ${categoryLabel(categories, state.categoryId)}`,
+      `Category: ${orgCategoryLabel(categories, state.categoryId, state.categoryOther)}`,
       `Tagline: ${state.tagline}`,
       `Description: ${state.description}`,
       `Website: ${state.website}`,
@@ -509,7 +554,7 @@ function decodeJwtPayload(token) {
       `Programs:`,
       ...(state.programs.length ? state.programs.map((p) => `  - ${p}`) : ["  (none)"]),
       "",
-      `Theme color: ${state.themeColor}`,
+      `Theme colors: ${state.themeColor} / ${state.themeColor2}`,
       "",
       state.pendingLogo
         ? `A new logo was selected on the edit page — please attach the downloaded "${current.slug}-logo.png" file here before sending.`

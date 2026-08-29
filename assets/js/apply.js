@@ -5,6 +5,8 @@ const APPLY_EMAIL = "contact@aariasblueelephant.org";
   document.getElementById("apply-email").href = `mailto:${APPLY_EMAIL}`;
 
   const categorySelect = document.getElementById("apply-category");
+  const categoryOtherField = document.getElementById("apply-category-other-field");
+  const categoryOtherInput = document.getElementById("apply-category-other");
   try {
     const categories = await loadCategories();
     categories.forEach((c) => {
@@ -17,10 +19,18 @@ const APPLY_EMAIL = "contact@aariasblueelephant.org";
     console.error(err);
   }
 
+  categorySelect.addEventListener("change", () => {
+    categoryOtherField.hidden = categorySelect.value !== "Other";
+  });
+
   const form = document.getElementById("apply-form");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
+
+    const category = data.category === "Other" && data.categoryOther
+      ? `Other — ${data.categoryOther}`
+      : data.category || "";
 
     const subject = `209 Nonprofit Collective Application — ${data.orgName || "New Organization"}`;
     const bodyLines = [
@@ -32,7 +42,7 @@ const APPLY_EMAIL = "contact@aariasblueelephant.org";
       `501(c)(3) / fiscal sponsorship status: ${data.status501c3 || ""}`,
       `Physical address: ${data.physicalAddress || ""}`,
       `ZIP code: ${data.zip || ""}`,
-      `Category: ${data.category || ""}`,
+      `Category: ${category}`,
       ``,
       `Mission / what you do:`,
       `${data.mission || ""}`,

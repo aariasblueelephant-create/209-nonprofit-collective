@@ -51,6 +51,7 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
   "slug": "example-org",                 // must match filename and manifest.json entry
   "name": "Example Org",
   "categoryId": "education",             // one of the ids in data/categories.json
+  "categoryOther": "",                   // only used when categoryId is "other" — shown as the badge label, but the org still files under "Other" for directory filtering
   "logo": "assets/logos/example-org.svg",// omit or leave "" to use the auto-generated initials badge
   "tagline": "One line describing the mission.",
   "description": "A longer paragraph shown on the org's profile page.",
@@ -61,7 +62,8 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
   "serviceArea": "Mountain House, CA 95391", // public location — city + ZIP only, never a street address (that's collected privately during vetting)
   "joinedDate": "2026-08-25",            // YYYY-MM-DD
   "banner": "",                          // optional path to a wide banner photo; "" shows a gradient instead
-  "themeColor": "",                      // optional 6-digit hex (e.g. "#22D3EE"); accents that org's own profile page; "" uses the site default cyan
+  "themeColor": "",                      // optional 6-digit hex (e.g. "#22D3EE"); primary accent for that org's own profile page; "" uses the site default cyan
+  "themeColor2": "",                     // optional 6-digit hex; secondary/complementary accent used alongside themeColor; "" uses the site default gold. edit.html offers named presets (Fire, Water, Earth, Sky) that set both together
   "donateUrl": "",                       // optional; shows a Donate button on the org page if set
   "programs": ["Program One", "Program Two"],
   "events": [

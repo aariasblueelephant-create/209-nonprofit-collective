@@ -18,6 +18,9 @@
     if (org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor)) {
       document.documentElement.style.setProperty("--org-accent", org.themeColor);
     }
+    if (org.themeColor2 && /^#[0-9a-fA-F]{6}$/.test(org.themeColor2)) {
+      document.documentElement.style.setProperty("--org-accent-2", org.themeColor2);
+    }
 
     const editLink = `edit.html?slug=${encodeURIComponent(slug)}`;
     document.getElementById("nav-edit-link").href = editLink;
@@ -28,7 +31,7 @@
 
     fillAvatar(document.getElementById("org-avatar"), org);
     document.getElementById("org-name").textContent = org.name;
-    document.getElementById("org-badge").textContent = categoryLabel(categories, org.categoryId);
+    document.getElementById("org-badge").textContent = orgCategoryLabel(categories, org.categoryId, org.categoryOther);
     document.getElementById("org-tagline").textContent = org.tagline || "";
     document.getElementById("org-description").textContent = org.description || "";
 

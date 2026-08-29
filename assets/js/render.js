@@ -67,7 +67,7 @@ function createCard(org, categories) {
 
   const badge = document.createElement("div");
   badge.className = "badge";
-  badge.textContent = categoryLabel(categories, org.categoryId);
+  badge.textContent = orgCategoryLabel(categories, org.categoryId, org.categoryOther);
 
   const tagline = document.createElement("div");
   tagline.className = "card-tagline";

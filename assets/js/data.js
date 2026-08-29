@@ -35,9 +35,11 @@ function applyLocalOverride(org) {
   if (!override) return org;
   const merged = { ...org, hasLocalEdit: true };
   if (override.themeColor) merged.themeColor = override.themeColor;
+  if (override.themeColor2) merged.themeColor2 = override.themeColor2;
   if (override.logo) merged.logo = override.logo;
   if (override.banner) merged.banner = override.banner;
   if (override.categoryId) merged.categoryId = override.categoryId;
+  if (override.categoryOther) merged.categoryOther = override.categoryOther;
   if (override.tagline) merged.tagline = override.tagline;
   if (override.description) merged.description = override.description;
   if (override.website) merged.website = override.website;
@@ -76,6 +78,14 @@ async function loadAllOrgs() {
 function categoryLabel(categories, categoryId) {
   const match = categories.find((c) => c.id === categoryId);
   return match ? match.label : "Other";
+}
+
+// Shows a member's own custom label when they picked "Other" — but the
+// underlying categoryId stays "other" so the directory filter still groups
+// them together instead of fragmenting into one-off filter options.
+function orgCategoryLabel(categories, categoryId, otherText) {
+  if (categoryId === "other" && otherText) return otherText;
+  return categoryLabel(categories, categoryId);
 }
 
 function formatDate(isoDate) {
