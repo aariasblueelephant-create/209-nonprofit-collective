@@ -130,8 +130,11 @@ button { font-family: inherit; }
   100% { transform: translate(1%, -2%); }
 }
 
-/* Everything above the ambient layer */
-body > *:not(.ambient) { position: relative; z-index: 1; }
+/* Everything above the ambient layer. .preloader must be excluded: this
+   selector scores (0,1,1) and would otherwise beat .preloader's (0,1,0),
+   overriding its position:fixed and rendering it as an in-flow block that
+   pushes the whole page down. */
+body > *:not(.ambient):not(.preloader) { position: relative; z-index: 1; }
 
 /* ---------- 3. Preloader ---------- */
 .preloader {
