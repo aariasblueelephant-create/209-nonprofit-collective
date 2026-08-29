@@ -58,13 +58,13 @@
     fb.target = "_blank";
     fb.rel = "noopener";
     fb.title = "Share on Facebook";
-    fb.textContent = "f";
+    fb.innerHTML = iconSvg("facebook", 18);
     const x = document.createElement("a");
     x.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(`Check out ${org.name} in the 209 Nonprofit Collective:`)}`;
     x.target = "_blank";
     x.rel = "noopener";
     x.title = "Share on X";
-    x.textContent = "X";
+    x.innerHTML = iconSvg("x", 18);
     shareWrap.appendChild(fb);
     shareWrap.appendChild(x);
 
@@ -72,7 +72,7 @@
     metaRow.innerHTML = "";
     if (org.serviceArea) {
       const span = document.createElement("span");
-      span.textContent = `📍 ${org.serviceArea}`;
+      span.innerHTML = `${iconSvg("pin", 16)} ${org.serviceArea}`;
       metaRow.appendChild(span);
     }
     if (org.website) {
@@ -80,29 +80,29 @@
       a.href = org.website;
       a.target = "_blank";
       a.rel = "noopener";
-      a.textContent = "Website ↗";
+      a.innerHTML = `${iconSvg("globe", 16)} Website`;
       metaRow.appendChild(a);
     }
     if (org.email) {
       const a = document.createElement("a");
       a.href = `mailto:${org.email}`;
-      a.textContent = "Email";
+      a.innerHTML = `${iconSvg("mail", 16)} Email`;
       metaRow.appendChild(a);
     }
     if (org.phone) {
       const a = document.createElement("a");
       a.href = `tel:${org.phone.replace(/[^\d+]/g, "")}`;
-      a.textContent = `📞 ${org.phone}`;
+      a.innerHTML = `${iconSvg("phone", 16)} ${org.phone}`;
       metaRow.appendChild(a);
     }
     if (org.ein) {
       const span = document.createElement("span");
-      span.textContent = `EIN ${org.ein}`;
+      span.innerHTML = `${iconSvg("shield", 16)} EIN ${org.ein}`;
       metaRow.appendChild(span);
     }
     if (org.joinedDate) {
       const span = document.createElement("span");
-      span.textContent = `Member since ${formatDate(org.joinedDate)}`;
+      span.innerHTML = `${iconSvg("calendar", 16)} Member since ${formatDate(org.joinedDate)}`;
       metaRow.appendChild(span);
     }
 
@@ -137,6 +137,9 @@
     }
 
     orgContent.hidden = false;
+    stagger(eventListEl.children);
+    stagger(announceList.children);
+    initReveal();
   } catch (err) {
     console.error(err);
     errorState.hidden = false;

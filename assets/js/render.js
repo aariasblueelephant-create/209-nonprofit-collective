@@ -76,7 +76,7 @@ function createCard(org, categories) {
   const link = document.createElement("a");
   link.className = "card-link";
   link.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
-  link.textContent = "View Profile →";
+  link.innerHTML = `View Profile ${iconSvg("arrowRight", 16)}`;
 
   card.appendChild(top);
   card.appendChild(badge);
@@ -164,7 +164,7 @@ function createEventItem(org, event, opts) {
     link.href = event.url;
     link.target = "_blank";
     link.rel = "noopener";
-    link.textContent = "Event details / RSVP →";
+    link.innerHTML = `Event details / RSVP ${iconSvg("external", 15)}`;
     content.appendChild(link);
   }
 

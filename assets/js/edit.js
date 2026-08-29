@@ -156,6 +156,15 @@ function decodeJwtPayload(token) {
     applyThemeVars();
   }
 
+  // Click-to-change overlay, re-attached after every render since both
+  // containers get their contents replaced when the preview redraws.
+  function addHint(container, label) {
+    const hint = document.createElement("div");
+    hint.className = "edit-preview-hint";
+    hint.innerHTML = `${iconSvg("image", label ? 20 : 18)}${label ? ` ${label}` : ""}`;
+    container.appendChild(hint);
+  }
+
   function renderPreview() {
     previewName.textContent = current ? current.name : "Organization Name";
     previewBadge.textContent = orgCategoryLabel(categories, state.categoryId, state.categoryOther);
@@ -169,8 +178,10 @@ function decodeJwtPayload(token) {
       img.alt = "Banner preview";
       previewBanner.appendChild(img);
     }
+    addHint(previewBanner, "Click to change banner");
 
     fillAvatar(previewAvatar, { logo: displayLogo(), name: current ? current.name : "Org" });
+    addHint(previewAvatar);
   }
 
   function renderThumbs() {

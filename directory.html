@@ -4,12 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Directory · 209 Nonprofit Collective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <div class="preloader">
+    <div style="display:grid;place-items:center;">
+      <div class="pre-mark">209</div>
+      <div class="pre-bar"><span></span></div>
+      <div class="pre-label">Nonprofit Collective</div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grain"></div>
+  </div>
+
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <a class="brand" href="index.html"><span class="grad-text">209</span> <span>Nonprofit Collective</span></a>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="directory.html" class="active">Directory</a>
@@ -20,12 +38,18 @@
 
   <section class="section">
     <div class="container">
-      <div class="section-head">
-        <h2>Member Directory</h2>
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">The Network</div>
+          <h2>Member Directory</h2>
+        </div>
       </div>
-      <p class="lead">Search and filter vetted nonprofits serving San Joaquin County.</p>
-      <div class="toolbar">
-        <input class="search-input" id="search-input" type="search" placeholder="Search by name, mission, or program…" />
+      <p class="lead reveal" style="margin-bottom: 32px;">Search and filter vetted nonprofits serving San Joaquin County.</p>
+      <div class="toolbar reveal">
+        <div class="search-wrap">
+          <i data-icon="search" data-icon-size="18"></i>
+          <input class="search-input" id="search-input" type="search" placeholder="Search by name, mission, or program…" />
+        </div>
         <select class="category-select" id="category-select">
           <option value="all">All Categories</option>
         </select>
@@ -43,6 +67,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/render.js" defer></script>
   <script src="assets/js/directory.js" defer></script>

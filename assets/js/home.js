@@ -1,7 +1,7 @@
 function initHeroOrbs(orgs) {
   const wrap = document.getElementById("hero-orbs");
   if (!wrap) return;
-  const palette = ["#22D3EE", "#FBBF24", "#A78BFA", "#F97316", "#0EA5E9", "#84CC16", "#38BDF8"];
+  const palette = ["#2DE2E6", "#FFB627", "#A855F7", "#FF5D8F", "#7CFF6B", "#38BDF8", "#F97316"];
   const ORB_COUNT = 9;
 
   const orbs = Array.from({ length: ORB_COUNT }, (_, i) => {
@@ -53,7 +53,7 @@ function initJoinedTicker(orgs) {
   const itemHtml = withDates
     .map((org) => `
       <a class="joined-ticker-item" href="org.html?slug=${encodeURIComponent(org.slug)}">
-        <span class="dot">●</span> Welcome ${org.name} <span class="date">— joined ${formatDate(org.joinedDate)}</span>
+        ${iconSvg("sparkle", 14)} Welcome <strong>${org.name}</strong> — joined ${formatDate(org.joinedDate)}
       </a>`)
     .join("");
   // Duplicated once so the scroll can loop seamlessly at -50% instead of jumping.
@@ -96,7 +96,7 @@ function initSpotlight(categories, orgs) {
     const link = document.createElement("a");
     link.className = "spotlight-link";
     link.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
-    link.textContent = "View Profile →";
+    link.innerHTML = `View Profile ${iconSvg("arrowRight", 16)}`;
     link.addEventListener("click", (e) => e.stopPropagation());
 
     card.appendChild(avatar);
@@ -116,6 +116,7 @@ function initSpotlight(categories, orgs) {
       });
     }
 
+    attachTilt(card, 8);
     stack.appendChild(card);
     return card;
   });
@@ -173,13 +174,13 @@ function initSpotlight(categories, orgs) {
     const addBubble = document.createElement("a");
     addBubble.className = "bubble bubble-add";
     addBubble.href = "apply.html";
-    addBubble.innerHTML = `<div class="bubble-avatar">+</div><div class="bubble-name">Join Us</div>`;
+    addBubble.innerHTML = `<div class="bubble-avatar">${iconSvg("plus", 22)}</div><div class="bubble-name">Join Us</div>`;
     bubbleGrid.appendChild(addBubble);
 
-    // Stats
-    statMembers.textContent = orgs.length;
+    // Stats — animate up once scrolled into view
     const usedCategories = new Set(orgs.map((o) => o.categoryId));
-    statCategories.textContent = usedCategories.size;
+    countUpOnView(statMembers, orgs.length);
+    countUpOnView(statCategories, usedCategories.size);
 
     // Announcements
     const all = orgs.flatMap((org) => (org.announcements || []).map((a) => ({ org, announcement: a })));
@@ -191,6 +192,7 @@ function initSpotlight(categories, orgs) {
       all.slice(0, 6).forEach(({ org, announcement }) => {
         announceList.appendChild(createAnnouncementItem(org, announcement));
       });
+      stagger(announceList.children);
     }
 
     // Upcoming events
@@ -207,7 +209,10 @@ function initSpotlight(categories, orgs) {
       events.slice(0, 8).forEach(({ org, event }) => {
         eventList.appendChild(createEventItem(org, event));
       });
+      stagger(eventList.children);
     }
+
+    initReveal();
   } catch (err) {
     console.error(err);
     const msg = '<div class="empty-state">Could not load member organizations. If you are viewing this file directly, run a local server (see README) so the browser can fetch the data files.</div>';

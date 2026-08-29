@@ -4,12 +4,30 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Apply to Join · 209 Nonprofit Collective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <div class="preloader">
+    <div style="display:grid;place-items:center;">
+      <div class="pre-mark">209</div>
+      <div class="pre-bar"><span></span></div>
+      <div class="pre-label">Nonprofit Collective</div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grain"></div>
+  </div>
+
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <a class="brand" href="index.html"><span class="grad-text">209</span> <span>Nonprofit Collective</span></a>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="directory.html">Directory</a>
@@ -19,11 +37,12 @@
   </nav>
 
   <div class="container apply-grid">
-    <div>
+    <div class="reveal">
+      <div class="section-kicker">Membership</div>
       <h2>Join the Collective</h2>
       <p class="lead">We're building a vetted network of nonprofits serving San Joaquin County — starting in Mountain House (95391) and growing across the 209. Membership is intentionally selective so it stays trustworthy for the community, local businesses, and the city.</p>
 
-      <h3>Who can join right now</h3>
+      <h3 style="margin-top: 40px;"><i data-icon="check" data-icon-size="17"></i> Who can join right now</h3>
       <ul>
         <li><strong>Physical address in ZIP 95391 (Mountain House) only, for now.</strong> We're starting narrow so we can test the site and vetting process properly — we plan to open registration to other San Joaquin County ZIP codes once that's done.</li>
         <li><strong>Registered 501(c)(3) nonprofits only</strong> (or fiscally sponsored charitable projects).</li>
@@ -31,7 +50,7 @@
         <li>Willingness to join a short personal vetting call before admission.</li>
       </ul>
 
-      <h3>What members get</h3>
+      <h3 style="margin-top: 40px;"><i data-icon="sparkle" data-icon-size="17"></i> What members get</h3>
       <ul>
         <li>A spot on the shared community calendar — list your own events any time, no separate approval needed once you're a member.</li>
         <li>A collective voice when requesting things like facility access and city support.</li>
@@ -44,8 +63,8 @@
       <p class="form-note">Prefer to just email us directly? Reach out to <a id="apply-email" href="#"></a> with your organization's details.</p>
     </div>
 
-    <div>
-      <form id="apply-form" class="side-card">
+    <div class="reveal">
+      <form id="apply-form" class="side-card" style="padding: 32px;">
         <div class="form-field">
           <label for="orgName">Organization name</label>
           <input id="orgName" name="orgName" type="text" required />
@@ -99,7 +118,7 @@
           <label for="reason">Why you want to join the collective</label>
           <textarea id="reason" name="reason" required></textarea>
         </div>
-        <button class="btn btn-gold" type="submit" style="width: 100%;">Send Application</button>
+        <button class="btn btn-gold" type="submit" style="width: 100%; justify-content: center;">Send Application <i data-icon="arrowRight" data-icon-size="17"></i></button>
         <p class="form-note">This opens your email client with your application pre-filled. We review every application on a personal call before adding you to the directory.</p>
       </form>
     </div>
@@ -112,6 +131,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/apply.js" defer></script>
 </body>

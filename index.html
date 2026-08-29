@@ -5,12 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>209 Nonprofit Collective</title>
   <meta name="description" content="A vetted network of nonprofits serving San Joaquin County — starting in Mountain House and growing across the 209." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <div class="preloader">
+    <div style="display:grid;place-items:center;">
+      <div class="pre-mark">209</div>
+      <div class="pre-bar"><span></span></div>
+      <div class="pre-label">Nonprofit Collective</div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="aurora aurora-4"></div>
+    <div class="grain"></div>
+  </div>
+
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <a class="brand" href="index.html"><span class="grad-text">209</span> <span>Nonprofit Collective</span></a>
       <div class="nav-links">
         <a href="index.html" class="active">Home</a>
         <a href="directory.html">Directory</a>
@@ -26,29 +45,36 @@
   <header class="hero">
     <div class="container">
       <div class="hero-copy">
-        <h1>Nonprofits of the <em>209</em>, working as one.</h1>
-        <p>A vetted network of San Joaquin County nonprofits — starting in Mountain House — coordinating events, sharing resources, and asking for what our community needs as a united voice.</p>
-        <div class="hero-actions">
-          <a class="btn btn-gold" href="directory.html">Explore Members</a>
+        <div class="hero-kicker reveal"><i data-icon="sparkle" data-icon-size="15"></i> San Joaquin County, CA</div>
+        <h1 class="reveal">Nonprofits of the <span class="grad-text">209</span>, working as one.</h1>
+        <p class="reveal">A vetted network of San Joaquin County nonprofits — starting in Mountain House — coordinating events, sharing resources, and asking for what our community needs as a united voice.</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-gold" href="directory.html">Explore Members <i data-icon="arrowRight" data-icon-size="17"></i></a>
           <a class="btn btn-outline" href="apply.html">Apply to Join</a>
         </div>
       </div>
-      <div class="hero-art">
-        <img src="assets/img/hero-photo.jpg" alt="Sunset over the hills and wind turbines of San Joaquin County" />
-        <div class="hero-orbs" id="hero-orbs"></div>
+      <div class="hero-art reveal">
+        <div class="hero-frame">
+          <img src="assets/img/hero-photo.jpg" alt="Sunset over the hills and wind turbines of San Joaquin County" />
+          <div class="hero-orbs" id="hero-orbs"></div>
+        </div>
       </div>
     </div>
+
     <div class="container">
       <div class="stats">
-        <div>
-          <div class="stat-num" id="stat-members">–</div>
+        <div class="stat reveal">
+          <i class="stat-icon" data-icon="users" data-icon-size="22"></i>
+          <div class="stat-num" id="stat-members">0</div>
           <div class="stat-label">Member Orgs</div>
         </div>
-        <div>
-          <div class="stat-num" id="stat-categories">–</div>
+        <div class="stat reveal">
+          <i class="stat-icon" data-icon="layers" data-icon-size="22"></i>
+          <div class="stat-num" id="stat-categories">0</div>
           <div class="stat-label">Categories Represented</div>
         </div>
-        <div>
+        <div class="stat reveal">
+          <i class="stat-icon" data-icon="pin" data-icon-size="22"></i>
           <div class="stat-num">95391</div>
           <div class="stat-label">Founding Service Area</div>
         </div>
@@ -57,12 +83,14 @@
   </header>
 
   <section class="section">
-    <div class="container">
-      <div class="section-head">
+    <div class="container spotlight-layout">
+      <div class="reveal">
+        <div class="section-kicker">Spotlight</div>
         <h2>Meet Our Members</h2>
+        <p class="lead" style="margin-top: 16px;">Every organization here has been vetted by phone before joining. Click through the stack to meet the nonprofits doing the work across the 209.</p>
+        <a class="link" href="directory.html" style="margin-top: 24px; display: inline-flex;">View full directory <i data-icon="arrowRight" data-icon-size="16"></i></a>
       </div>
-      <p class="lead">A rotating spotlight on the nonprofits doing the work — click a card to see the next one.</p>
-      <div class="spotlight">
+      <div class="spotlight reveal">
         <div class="spotlight-stack" id="spotlight-stack">
           <div class="empty-state">Loading members…</div>
         </div>
@@ -73,10 +101,13 @@
 
   <section class="section section-alt">
     <div class="container">
-      <div class="section-head">
-        <h2>Upcoming Events</h2>
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">Shared Calendar</div>
+          <h2>Upcoming Events</h2>
+        </div>
       </div>
-      <p class="lead">Every member can advertise their own events here — no separate approval needed once you're a vetted member.</p>
+      <p class="lead reveal" style="margin-bottom: 32px;">Every member can advertise their own events here — no separate approval needed once you're a vetted member.</p>
       <div class="event-list" id="events-list">
         <div class="empty-state">Loading events…</div>
       </div>
@@ -85,11 +116,14 @@
 
   <section class="section">
     <div class="container">
-      <div class="section-head">
-        <h2>Member Organizations</h2>
-        <a class="link" href="directory.html">View full directory →</a>
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">The Network</div>
+          <h2>Member Organizations</h2>
+        </div>
+        <a class="link" href="directory.html">View full directory <i data-icon="arrowRight" data-icon-size="16"></i></a>
       </div>
-      <div class="bubble-grid" id="member-bubbles">
+      <div class="bubble-grid reveal" id="member-bubbles">
         <div class="empty-state">Loading member organizations…</div>
       </div>
     </div>
@@ -97,8 +131,11 @@
 
   <section class="section section-alt">
     <div class="container">
-      <div class="section-head">
-        <h2>Latest Announcements</h2>
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">From Our Members</div>
+          <h2>Latest Announcements</h2>
+        </div>
       </div>
       <div class="announce-list" id="announcements-list">
         <div class="empty-state">Loading announcements…</div>
@@ -108,12 +145,15 @@
 
   <section class="section">
     <div class="container">
-      <div class="section-head">
-        <h2>How It Works</h2>
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">How It Works</div>
+          <h2>Vetted, coordinated, and heard together.</h2>
+        </div>
       </div>
-      <p class="lead">Every member organization is vetted by phone before joining — this keeps the collective trustworthy for the community, local businesses, and the city alike. Members coordinate events, share resources, and speak with one voice when asking for things like facility access and civic support. Local sponsors can also use the collective to find causes that match what they care about.</p>
-      <div class="hero-actions" style="margin-top: 20px;">
-        <a class="btn btn-gold" href="apply.html">Apply to Join</a>
+      <p class="lead reveal">Every member organization is vetted by phone before joining — this keeps the collective trustworthy for the community, local businesses, and the city alike. Members coordinate events, share resources, and speak with one voice when asking for things like facility access and civic support. Local sponsors can also use the collective to find causes that match what they care about.</p>
+      <div class="hero-actions reveal" style="margin-top: 32px;">
+        <a class="btn btn-gold" href="apply.html">Apply to Join <i data-icon="arrowRight" data-icon-size="17"></i></a>
       </div>
     </div>
   </section>
@@ -125,6 +165,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/render.js" defer></script>
   <script src="assets/js/home.js" defer></script>

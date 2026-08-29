@@ -4,13 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edit Your Organization · 209 Nonprofit Collective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+  <div class="preloader">
+    <div style="display:grid;place-items:center;">
+      <div class="pre-mark">209</div>
+      <div class="pre-bar"><span></span></div>
+      <div class="pre-label">Nonprofit Collective</div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grain"></div>
+  </div>
+
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <a class="brand" href="index.html"><span class="grad-text">209</span> <span>Nonprofit Collective</span></a>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="directory.html">Directory</a>
@@ -20,13 +38,14 @@
   </nav>
 
   <div class="container apply-grid">
-    <div>
+    <div class="reveal">
+      <div class="section-kicker">Member Tools</div>
       <h2>Edit Your Organization</h2>
-      <p class="lead">Update your theme color, logo, banner, and profile text — category, tagline, description, contact info, EIN, location, donate link, and programs. Anyone can preview changes here, so please only edit your own organization.</p>
+      <p class="lead">Update your theme, logo, banner, and profile text — category, tagline, description, contact info, EIN, location, donate link, and programs. Anyone can preview changes here, so please only edit your own organization.</p>
       <p class="form-note"><strong>Verified editors publish instantly.</strong> Sign in with the Google account on file for your organization and, if it's recognized, your changes go live automatically — no email needed. Everyone else's changes still preview locally and go out as an email for us to apply.</p>
 
-      <div class="side-card" id="signin-card" style="margin-bottom: 24px;">
-        <h3 style="margin-top: 0;">Sign in to publish instantly</h3>
+      <div class="side-card" id="signin-card" style="margin: 24px 0;">
+        <h3 style="margin-top: 0;"><i data-icon="shield" data-icon-size="17"></i> Sign in to publish instantly</h3>
         <div id="g_id_signin"></div>
         <p class="field-hint" id="signin-status">Not signed in — changes will preview locally and go out by email.</p>
         <p class="field-hint" id="signin-unconfigured" hidden>Google sign-in isn't configured on this deployment yet — you can still use the email flow below.</p>
@@ -49,8 +68,8 @@
       <p class="form-note">Prefer to just send us the files directly? Email <a id="edit-email" href="#"></a>.</p>
     </div>
 
-    <div>
-      <form id="edit-form" class="side-card">
+    <div class="reveal">
+      <form id="edit-form" class="side-card" style="padding: 32px;">
         <div class="form-field">
           <label for="edit-org">Your organization</label>
           <select id="edit-org" name="org" required></select>
@@ -133,7 +152,7 @@
             <label class="btn btn-outline btn-sm" for="edit-logo">Choose image</label>
             <input class="file-input" id="edit-logo" name="logo" type="file" accept="image/*" />
           </div>
-          <a class="form-note" id="logo-download" href="#" download hidden>⬇ Download this logo file to attach to the email</a>
+          <a class="form-note" id="logo-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download this logo file to attach to the email</a>
         </div>
 
         <div class="form-field">
@@ -144,11 +163,11 @@
             <label class="btn btn-outline btn-sm" for="edit-banner">Choose image</label>
             <input class="file-input" id="edit-banner" name="banner" type="file" accept="image/*" />
           </div>
-          <a class="form-note" id="banner-download" href="#" download hidden>⬇ Download this banner file to attach to the email</a>
+          <a class="form-note" id="banner-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download this banner file to attach to the email</a>
         </div>
 
-        <button class="btn btn-gold" type="submit" id="submit-btn" style="width: 100%;">Save & Email Us</button>
-        <button class="btn btn-outline btn-sm" type="button" id="reset-btn" style="width: 100%; margin-top: 10px;">Reset local preview</button>
+        <button class="btn btn-gold" type="submit" id="submit-btn" style="width: 100%; justify-content: center;">Save &amp; Email Us</button>
+        <button class="btn btn-outline btn-sm" type="button" id="reset-btn" style="width: 100%; margin-top: 10px; justify-content: center;">Reset local preview</button>
         <div class="save-status" id="save-status"></div>
       </form>
     </div>
@@ -161,6 +180,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/render.js" defer></script>
   <script src="assets/js/edit.js" defer></script>

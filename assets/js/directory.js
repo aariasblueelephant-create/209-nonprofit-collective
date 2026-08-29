@@ -26,6 +26,8 @@
       return;
     }
     filtered.forEach((org) => grid.appendChild(createCard(org, categories)));
+    stagger(grid.children, 55);
+    initReveal();
   }
 
   try {

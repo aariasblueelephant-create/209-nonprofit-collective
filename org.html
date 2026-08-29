@@ -4,22 +4,40 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Organization · 209 Nonprofit Collective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <div class="preloader">
+    <div style="display:grid;place-items:center;">
+      <div class="pre-mark">209</div>
+      <div class="pre-bar"><span></span></div>
+      <div class="pre-label">Nonprofit Collective</div>
+    </div>
+  </div>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="grain"></div>
+  </div>
+
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html">209 <span>Nonprofit Collective</span></a>
+      <a class="brand" href="index.html"><span class="grad-text">209</span> <span>Nonprofit Collective</span></a>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="directory.html">Directory</a>
         <a href="apply.html">Apply to Join</a>
-        <a href="edit.html" id="nav-edit-link" class="nav-edit-btn">✎ Edit</a>
+        <a href="edit.html" id="nav-edit-link" class="nav-edit-btn"><i data-icon="edit" data-icon-size="15"></i> Edit</a>
       </div>
     </div>
   </nav>
 
-  <div id="error-state" class="container" hidden style="padding: 60px 24px;">
+  <div id="error-state" class="container" hidden style="padding: 80px 0;">
     <p class="empty-state">We couldn't find that organization. <a href="directory.html">Back to the directory →</a></p>
   </div>
 
@@ -34,7 +52,7 @@
         <div class="org-avatar" id="org-avatar"></div>
         <div class="badge" id="org-badge"></div>
         <h1 id="org-name"></h1>
-        <p id="org-tagline" style="color: var(--muted); margin: 0;"></p>
+        <p id="org-tagline"></p>
         <div class="org-meta-row" id="org-meta-row"></div>
         <div class="org-actions">
           <a class="btn btn-gold" id="org-donate" href="#" target="_blank" rel="noopener" hidden>Donate</a>
@@ -45,29 +63,29 @@
 
     <div class="container org-body">
       <div>
-        <h3>About</h3>
+        <h3><i data-icon="sparkle" data-icon-size="17"></i> About</h3>
         <p id="org-description"></p>
 
-        <div style="margin-top: 32px;">
-          <h3>Upcoming Events</h3>
+        <div style="margin-top: 48px;">
+          <h3><i data-icon="calendar" data-icon-size="17"></i> Upcoming Events</h3>
           <div class="event-list" id="org-events"></div>
         </div>
 
-        <div style="margin-top: 32px;">
-          <h3>Announcements</h3>
+        <div style="margin-top: 48px;">
+          <h3><i data-icon="megaphone" data-icon-size="17"></i> Announcements</h3>
           <div class="announce-list" id="org-announcements"></div>
         </div>
       </div>
 
       <div>
         <div class="side-card" id="programs-card">
-          <h3>Programs</h3>
+          <h3><i data-icon="layers" data-icon-size="17"></i> Programs</h3>
           <ul class="program-list" id="program-list"></ul>
         </div>
         <div class="side-card">
-          <h3>Support this org</h3>
-          <p style="font-size: 0.9rem; color: var(--muted);">Interested sponsors can reach out directly, or apply to the collective to explore matching with a cause you believe in.</p>
-          <a class="btn btn-gold" href="apply.html" style="margin-top: 10px;">Apply to Join</a>
+          <h3><i data-icon="heart" data-icon-size="17"></i> Support this org</h3>
+          <p style="font-size: 0.9rem;">Interested sponsors can reach out directly, or apply to the collective to explore matching with a cause you believe in.</p>
+          <a class="btn btn-gold btn-sm" href="apply.html" style="margin-top: 12px;">Apply to Join</a>
         </div>
       </div>
     </div>
@@ -80,6 +98,8 @@
     </div>
   </footer>
 
+  <script src="assets/js/icons.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
   <script src="assets/js/data.js" defer></script>
   <script src="assets/js/render.js" defer></script>
   <script src="assets/js/org-page.js" defer></script>
