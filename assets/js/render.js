@@ -106,9 +106,12 @@ function eventDateBadge(isoDate) {
 
 function createEventItem(org, event, opts) {
   const showOrg = !opts || opts.showOrg !== false;
-  const item = document.createElement("a");
+  // A plain div, not a link — an event can have its own separate external
+  // link (RSVP/details), so the whole card can't also be one big <a> to the
+  // org page (can't legally nest <a> tags). The org name below is the link
+  // back to the org instead.
+  const item = document.createElement("div");
   item.className = "event-item";
-  item.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
 
   item.appendChild(eventDateBadge(event.date));
 
@@ -131,14 +134,21 @@ function createEventItem(org, event, opts) {
   title.textContent = event.title;
   content.appendChild(title);
 
-  const metaParts = [];
-  if (showOrg) metaParts.push(org.name);
-  if (event.time) metaParts.push(event.time);
-  if (event.location) metaParts.push(event.location);
-
   const meta = document.createElement("div");
   meta.className = "event-meta";
-  meta.textContent = metaParts.join(" · ");
+  const metaNodes = [];
+  if (showOrg) {
+    const orgLink = document.createElement("a");
+    orgLink.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
+    orgLink.textContent = org.name;
+    metaNodes.push(orgLink);
+  }
+  if (event.time) metaNodes.push(document.createTextNode(event.time));
+  if (event.location) metaNodes.push(document.createTextNode(event.location));
+  metaNodes.forEach((node, i) => {
+    if (i > 0) meta.appendChild(document.createTextNode(" · "));
+    meta.appendChild(node);
+  });
   content.appendChild(meta);
 
   if (event.description) {
@@ -146,6 +156,16 @@ function createEventItem(org, event, opts) {
     desc.className = "event-desc";
     desc.textContent = event.description;
     content.appendChild(desc);
+  }
+
+  if (event.url) {
+    const link = document.createElement("a");
+    link.className = "event-link";
+    link.href = event.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "Event details / RSVP →";
+    content.appendChild(link);
   }
 
   item.appendChild(content);

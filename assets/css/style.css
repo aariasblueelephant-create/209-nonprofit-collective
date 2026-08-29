@@ -570,7 +570,9 @@ img { max-width: 100%; display: block; }
 
 .event-title { font-weight: 700; }
 .event-meta { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.event-meta a { color: var(--cyan); font-weight: 600; }
 .event-desc { font-size: 0.88rem; color: var(--text); margin-top: 4px; opacity: 0.9; }
+.event-link { display: inline-block; margin-top: 8px; font-size: 0.85rem; font-weight: 700; color: var(--cyan); border-bottom: 2px solid var(--gold); }
 
 /* Org profile page */
 .org-header {
