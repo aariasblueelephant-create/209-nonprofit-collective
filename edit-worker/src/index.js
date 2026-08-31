@@ -108,10 +108,68 @@ async function verifyGoogleIdToken(env, idToken) {
   return String(info.email || "").toLowerCase();
 }
 
-async function isAuthorizedEditor(env, email, slug) {
+// --- Domain-based authorization -------------------------------------------
+// Mirrored from assets/js/domain-auth.js. The client copy only drives UI
+// state; THIS copy is the one that gates writes. Keep them in sync.
+const PUBLIC_EMAIL_DOMAINS = new Set([
+  "gmail.com", "googlemail.com", "yahoo.com", "ymail.com", "hotmail.com",
+  "outlook.com", "live.com", "msn.com", "aol.com", "icloud.com", "me.com",
+  "mac.com", "proton.me", "protonmail.com", "pm.me", "gmx.com", "gmx.net",
+  "mail.com", "zoho.com", "yandex.com", "comcast.net", "sbcglobal.net",
+  "att.net", "verizon.net", "cox.net", "charter.net", "pacbell.net",
+  "outlook.co.uk", "hotmail.co.uk", "yahoo.co.uk",
+]);
+const SHARED_HOSTS = new Set([
+  "wixsite.com", "wordpress.com", "squarespace.com", "weebly.com",
+  "godaddysites.com", "sites.google.com", "blogspot.com", "facebook.com",
+  "wix.com", "webflow.io", "github.io", "netlify.app", "vercel.app",
+  "linktr.ee", "carrd.co", "notion.site",
+]);
+
+function normalizeHost(host) {
+  return String(host || "").trim().toLowerCase().replace(/^www\./, "").replace(/\.$/, "");
+}
+function domainFromUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  try {
+    return normalizeHost(new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname);
+  } catch {
+    return "";
+  }
+}
+function domainFromEmail(email) {
+  const at = String(email || "").lastIndexOf("@");
+  return at === -1 ? "" : normalizeHost(String(email).slice(at + 1));
+}
+function isSharedHost(domain) {
+  if (SHARED_HOSTS.has(domain)) return true;
+  return [...SHARED_HOSTS].some((h) => domain.endsWith(`.${h}`));
+}
+function emailMatchesOrgDomain(email, websiteUrl) {
+  const e = domainFromEmail(email);
+  const w = domainFromUrl(websiteUrl);
+  if (!e || !w) return false;
+  if (!e.includes(".") || !w.includes(".")) return false;
+  if (PUBLIC_EMAIL_DOMAINS.has(e) || PUBLIC_EMAIL_DOMAINS.has(w)) return false;
+  if (isSharedHost(e) || isSharedHost(w)) return false;
+  if (e === w) return true;
+  return e.endsWith(`.${w}`) || w.endsWith(`.${e}`);
+}
+// --------------------------------------------------------------------------
+
+// Authorized either by explicit allowlist entry, or by holding an email at
+// the organisation's own website domain.
+async function authorizeEditor(env, email, slug, org) {
   const { content } = await githubGetFile(env, "data/editors.json");
   const editors = JSON.parse(content);
-  return editors.some((e) => String(e.email || "").toLowerCase() === email && e.slug === slug);
+  if (editors.some((e) => String(e.email || "").toLowerCase() === email && e.slug === slug)) {
+    return "allowlist";
+  }
+  // Match against the website as currently committed in the repo — never a
+  // value from the request body, which the caller controls.
+  if (emailMatchesOrgDomain(email, org.website)) return "domain";
+  return null;
 }
 
 function dataUrlToBase64(dataUrl) {
@@ -153,18 +211,27 @@ export default {
     }
 
     try {
-      const authorized = await isAuthorizedEditor(env, email, slug);
-      if (!authorized) {
-        return json(env, { ok: false, error: `${email} is not a listed editor for "${slug}".` }, 403);
-      }
-
+      // Load the org BEFORE authorizing: domain matching must use the website
+      // as committed in the repo, never a value supplied in this request.
       const orgPath = `data/orgs/${slug}.json`;
       const { content: orgRaw, sha: orgSha } = await githubGetFile(env, orgPath);
       const org = JSON.parse(orgRaw);
 
+      const grant = await authorizeEditor(env, email, slug, org);
+      if (!grant) {
+        return json(env, { ok: false, error: `${email} is not a listed editor for "${slug}", and its domain doesn't match that organisation's website.` }, 403);
+      }
+
       if (fields && typeof fields === "object") {
         for (const key of EDITABLE_FIELDS) {
-          if (Object.prototype.hasOwnProperty.call(fields, key)) org[key] = fields[key];
+          if (!Object.prototype.hasOwnProperty.call(fields, key)) continue;
+          // The website domain is what grants domain-based access, so someone
+          // holding only that grant must not be able to repoint it — that
+          // would let them hand edit rights to a different domain.
+          if (key === "website" && grant === "domain" && domainFromUrl(fields.website) !== domainFromUrl(org.website)) {
+            return json(env, { ok: false, error: "Changing the website domain requires an allowlisted editor. Email us and we'll make the change." }, 403);
+          }
+          org[key] = fields[key];
         }
       }
 

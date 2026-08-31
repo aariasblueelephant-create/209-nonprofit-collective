@@ -82,16 +82,33 @@ function decodeJwtPayload(token) {
   let googleIdToken = null;
   let googleEmail = null;
 
+  // Mirrors the Worker's rule: an explicit allowlist entry, or an email at
+  // the organisation's own website domain. Returns "allowlist" | "domain" | null.
+  function grantFor(slug) {
+    if (!googleEmail) return null;
+    if (editors.some((e) => String(e.email || "").toLowerCase() === googleEmail && e.slug === slug)) {
+      return "allowlist";
+    }
+    const org = orgs.find((o) => o.slug === slug);
+    if (org && emailMatchesOrgDomain(googleEmail, org.website)) return "domain";
+    return null;
+  }
+
   function isAuthorizedFor(slug) {
-    return !!googleEmail && editors.some((e) => String(e.email || "").toLowerCase() === googleEmail && e.slug === slug);
+    return grantFor(slug) !== null;
   }
 
   function updateSigninUI() {
     const slug = current ? current.slug : null;
     if (googleEmail) {
-      signinStatus.textContent = slug && isAuthorizedFor(slug)
-        ? `Signed in as ${googleEmail} — authorized to publish live for ${current.name}.`
-        : `Signed in as ${googleEmail} — not a listed editor for ${current ? current.name : "this organization"}; changes will preview locally and go out by email instead.`;
+      const grant = slug ? grantFor(slug) : null;
+      if (grant === "domain") {
+        signinStatus.textContent = `Signed in as ${googleEmail} — recognised as ${current.name} (your email domain matches their website). You can publish live.`;
+      } else if (grant === "allowlist") {
+        signinStatus.textContent = `Signed in as ${googleEmail} — authorized to publish live for ${current.name}.`;
+      } else {
+        signinStatus.textContent = `Signed in as ${googleEmail} — we can't match this address to ${current ? current.name : "this organization"}; changes will preview locally and go out by email instead.`;
+      }
     } else {
       signinStatus.textContent = "Not signed in — changes will preview locally and go out by email.";
     }

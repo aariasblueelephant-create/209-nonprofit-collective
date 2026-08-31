@@ -52,6 +52,7 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
   "name": "Example Org",
   "categoryId": "education",             // one of the ids in data/categories.json
   "categoryOther": "",                   // only used when categoryId is "other" — shown as the badge label, but the org still files under "Other" for directory filtering
+  "alsoServes": ["youth-family"],        // optional extra category ids. The org appears under each of these in Find Help and the directory filter, while categoryId stays the single label on its badge
   "logo": "assets/logos/example-org.svg",// omit or leave "" to use the auto-generated initials badge
   "tagline": "One line describing the mission.",
   "description": "A longer paragraph shown on the org's profile page.",
@@ -116,6 +117,31 @@ A member listed in `data/editors.json` can sign in with Google on `edit.html` an
 4. GitHub Pages picks up the new commit and the change is live within about a minute.
 
 If a signed-in email isn't listed in `editors.json` for that org, or the Worker call fails for any reason, the page automatically falls back to the existing local-preview + email flow — nothing breaks for anyone not yet set up as a verified editor.
+
+### Who is allowed to publish
+
+Two ways to qualify. The Worker enforces both server-side; the client copy in
+`assets/js/domain-auth.js` only drives the UI, so **keep the two in sync**.
+
+1. **Allowlist** — an `{email, slug}` entry in `data/editors.json`.
+2. **Domain match** — the signed-in Google email is at the same domain as the
+   org's own `website`. You can't hold an `@aariasblueelephant.org` address
+   unless whoever runs that domain issued it, so this is a solid affiliation
+   signal and saves hand-adding every staff member.
+
+Guards on the domain path, all covered by cases in `domain-auth.js`:
+
+- Consumer mail domains (gmail, outlook, icloud, …) never match, so an org
+  that listed a free host as its "website" can't hand access to millions.
+- Shared platforms (`*.wixsite.com`, `*.github.io`, …) never match — thousands
+  of unrelated tenants share those domains.
+- Both sides must be real multi-label domains, so a malformed website value
+  like `"org"` can't match every `.org` address.
+- Matching uses the website **as committed in the repo**, never a value from
+  the request body.
+- A domain-authorized editor cannot change the website domain — that field is
+  what grants their access, so repointing it would let them hand edit rights
+  to a different domain. Allowlisted editors still can.
 
 ### One-time setup (only needed once, by whoever administers the site)
 
