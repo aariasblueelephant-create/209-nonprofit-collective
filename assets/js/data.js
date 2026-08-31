@@ -89,6 +89,15 @@ function orgCategoryLabel(categories, categoryId, otherText) {
   return categoryLabel(categories, categoryId);
 }
 
+// Local YYYY-MM-DD. Deliberately NOT toISOString(), which converts to UTC —
+// in California that rolls over to tomorrow's date after ~5pm, which made
+// events happening *today* disappear from "upcoming" for the rest of the day.
+function todayISO() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 function formatDate(isoDate) {
   if (!isoDate) return "";
   const d = new Date(`${isoDate}T00:00:00`);

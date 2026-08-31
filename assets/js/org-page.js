@@ -161,7 +161,7 @@
 
     const eventListEl = document.getElementById("org-events");
     eventListEl.innerHTML = "";
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayISO();
     const upcoming = (org.events || [])
       .filter((e) => e.date >= today)
       .sort((a, b) => (a.date > b.date ? 1 : -1));

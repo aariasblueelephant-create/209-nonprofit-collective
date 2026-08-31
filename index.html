@@ -82,6 +82,37 @@
     </div>
   </header>
 
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">Shared Calendar</div>
+          <h2>What's happening in the 209</h2>
+        </div>
+        <div class="cal-nav">
+          <button type="button" id="cal-prev" aria-label="Previous month"><i data-icon="arrowRight" data-icon-size="17"></i></button>
+          <div id="cal-month"></div>
+          <button type="button" id="cal-next" aria-label="Next month"><i data-icon="arrowRight" data-icon-size="17"></i></button>
+        </div>
+      </div>
+      <div class="calendar-layout reveal">
+        <div class="calendar-card">
+          <div class="cal-grid" id="cal-grid"></div>
+          <p class="cal-legend">Each dot is a member organization. Pick a day to see what's on.</p>
+        </div>
+        <div class="calendar-events">
+          <div class="cal-events-head">
+            <h3 id="events-heading">Coming up next</h3>
+            <button type="button" class="cal-clear" id="cal-clear" hidden>Show upcoming</button>
+          </div>
+          <div class="event-list" id="events-list">
+            <div class="empty-state">Loading events…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container spotlight-layout">
       <div class="reveal">
@@ -103,21 +134,6 @@
     <div class="container">
       <div class="section-head reveal">
         <div>
-          <div class="section-kicker">Shared Calendar</div>
-          <h2>Upcoming Events</h2>
-        </div>
-      </div>
-      <p class="lead reveal" style="margin-bottom: 32px;">Every member can advertise their own events here — no separate approval needed once you're a vetted member.</p>
-      <div class="event-list" id="events-list">
-        <div class="empty-state">Loading events…</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-head reveal">
-        <div>
           <div class="section-kicker">The Network</div>
           <h2>Member Organizations</h2>
         </div>
@@ -129,7 +145,7 @@
     </div>
   </section>
 
-  <section class="section section-alt">
+  <section class="section">
     <div class="container">
       <div class="section-head reveal">
         <div>
@@ -143,7 +159,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section-alt">
     <div class="container">
       <div class="section-head reveal">
         <div>

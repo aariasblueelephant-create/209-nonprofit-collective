@@ -61,6 +61,124 @@ function initJoinedTicker(orgs) {
   ticker.hidden = false;
 }
 
+// Month grid of every member's events. Dots are coloured by each org's own
+// theme, so at a glance you can see who is active on which day.
+function initCalendar(orgs, onSelectDate) {
+  const grid = document.getElementById("cal-grid");
+  const label = document.getElementById("cal-month");
+  const prevBtn = document.getElementById("cal-prev");
+  const nextBtn = document.getElementById("cal-next");
+  if (!grid) return;
+
+  // date string -> [{org, event}]
+  const byDate = new Map();
+  orgs.forEach((org) => {
+    (org.events || []).forEach((event) => {
+      if (!event.date) return;
+      if (!byDate.has(event.date)) byDate.set(event.date, []);
+      byDate.get(event.date).push({ org, event });
+    });
+  });
+
+  const today = todayISO();
+  const [ty, tm] = today.split("-").map(Number);
+  let viewYear = ty;
+  let viewMonth = tm - 1; // 0-indexed
+  let selected = null;
+
+  // If nothing is on this month, open on the month of the next upcoming
+  // event instead — landing on an empty grid reads as "nothing ever happens".
+  const thisMonthPrefix = `${ty}-${String(tm).padStart(2, "0")}`;
+  const hasThisMonth = [...byDate.keys()].some((d) => d.startsWith(thisMonthPrefix));
+  if (!hasThisMonth) {
+    const nextDate = [...byDate.keys()].filter((d) => d >= today).sort()[0];
+    if (nextDate) {
+      const [ny, nm] = nextDate.split("-").map(Number);
+      viewYear = ny;
+      viewMonth = nm - 1;
+    }
+  }
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const iso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+
+  function render() {
+    label.textContent = new Date(viewYear, viewMonth, 1)
+      .toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+    grid.innerHTML = "";
+    ["S", "M", "T", "W", "T", "F", "S"].forEach((d) => {
+      const el = document.createElement("div");
+      el.className = "cal-dow";
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+
+    const firstWeekday = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cal-day cal-empty";
+      grid.appendChild(cell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = iso(viewYear, viewMonth, day);
+      const entries = byDate.get(dateStr) || [];
+      const cell = document.createElement(entries.length ? "button" : "div");
+      cell.className = "cal-day";
+      if (dateStr === today) cell.classList.add("is-today");
+      if (dateStr < today) cell.classList.add("is-past");
+      if (entries.length) cell.classList.add("has-events");
+      if (selected === dateStr) cell.classList.add("is-selected");
+
+      const num = document.createElement("span");
+      num.className = "cal-num";
+      num.textContent = day;
+      cell.appendChild(num);
+
+      if (entries.length) {
+        cell.type = "button";
+        const dots = document.createElement("span");
+        dots.className = "cal-dots";
+        // Cap the dots so a busy day doesn't overflow its cell.
+        entries.slice(0, 4).forEach(({ org }) => {
+          const dot = document.createElement("span");
+          dot.className = "cal-dot";
+          dot.style.background = org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor)
+            ? org.themeColor : "var(--aqua)";
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+        cell.title = entries.map(({ org, event }) => `${org.name}: ${event.title}`).join("\n");
+        cell.setAttribute("aria-label",
+          `${formatDate(dateStr)} — ${entries.length} event${entries.length > 1 ? "s" : ""}`);
+        cell.addEventListener("click", () => {
+          selected = selected === dateStr ? null : dateStr;
+          render();
+          onSelectDate(selected);
+        });
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  prevBtn.addEventListener("click", () => {
+    viewMonth -= 1;
+    if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
+    render();
+  });
+  nextBtn.addEventListener("click", () => {
+    viewMonth += 1;
+    if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
+    render();
+  });
+
+  render();
+}
+
 function initSpotlight(categories, orgs) {
   const stack = document.getElementById("spotlight-stack");
   const dotsWrap = document.getElementById("spotlight-dots");
@@ -195,22 +313,43 @@ function initSpotlight(categories, orgs) {
       stagger(announceList.children);
     }
 
-    // Upcoming events
-    const today = new Date().toISOString().slice(0, 10);
-    const events = orgs
-      .flatMap((org) => (org.events || []).map((e) => ({ org, event: e })))
-      .filter(({ event }) => event.date >= today)
-      .sort((a, b) => (a.event.date > b.event.date ? 1 : -1));
+    // Shared calendar + the event list beneath it
+    const today = todayISO();
+    const allEvents = orgs.flatMap((org) => (org.events || []).map((e) => ({ org, event: e })));
+    const eventHeading = document.getElementById("events-heading");
+    const clearBtn = document.getElementById("cal-clear");
 
-    eventList.innerHTML = "";
-    if (events.length === 0) {
-      eventList.innerHTML = '<div class="empty-state">No events scheduled yet. Member orgs can add their own to claim a spot on the shared calendar — see the README for how.</div>';
-    } else {
-      events.slice(0, 8).forEach(({ org, event }) => {
+    function renderEvents(dateFilter) {
+      // A specific day shows everything on it (including past days you clicked
+      // back to); with no filter we show what's still ahead.
+      const list = (dateFilter
+        ? allEvents.filter(({ event }) => event.date === dateFilter)
+        : allEvents.filter(({ event }) => event.date >= today)
+      ).sort((a, b) => (a.event.date > b.event.date ? 1 : -1));
+
+      eventHeading.textContent = dateFilter ? formatDate(dateFilter) : "Coming up next";
+      clearBtn.hidden = !dateFilter;
+
+      eventList.innerHTML = "";
+      if (list.length === 0) {
+        eventList.innerHTML = dateFilter
+          ? '<div class="empty-state">Nothing scheduled on this day.</div>'
+          : '<div class="empty-state">No upcoming events yet. Members can add their own to claim a spot on the shared calendar.</div>';
+        return;
+      }
+      list.slice(0, dateFilter ? 20 : 6).forEach(({ org, event }) => {
         eventList.appendChild(createEventItem(org, event));
       });
       stagger(eventList.children);
+      initReveal();
     }
+
+    initCalendar(orgs, renderEvents);
+    renderEvents(null);
+    clearBtn.addEventListener("click", () => {
+      // Re-render the calendar without a selection by simulating a clear.
+      document.querySelectorAll(".cal-day.is-selected").forEach((el) => el.click());
+    });
 
     initReveal();
   } catch (err) {
