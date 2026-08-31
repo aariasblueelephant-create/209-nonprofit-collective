@@ -7,7 +7,7 @@
   let orgs = [];
 
   function matches(org, query, categoryId) {
-    if (categoryId !== "all" && org.categoryId !== categoryId) return false;
+    if (categoryId !== "all" && !orgServesCategory(org, categoryId)) return false;
     if (!query) return true;
     const haystack = [org.name, org.tagline, org.description, ...(org.programs || [])]
       .join(" ")

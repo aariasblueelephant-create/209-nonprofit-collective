@@ -14,6 +14,7 @@ const EDITABLE_FIELDS = [
   "themeColor2",
   "categoryId",
   "categoryOther",
+  "alsoServes",
   "tagline",
   "description",
   "website",

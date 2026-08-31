@@ -40,6 +40,7 @@ function applyLocalOverride(org) {
   if (override.banner) merged.banner = override.banner;
   if (override.categoryId) merged.categoryId = override.categoryId;
   if (override.categoryOther) merged.categoryOther = override.categoryOther;
+  if (override.alsoServes) merged.alsoServes = override.alsoServes;
   if (override.tagline) merged.tagline = override.tagline;
   if (override.description) merged.description = override.description;
   if (override.website) merged.website = override.website;
@@ -87,6 +88,18 @@ function categoryLabel(categories, categoryId) {
 function orgCategoryLabel(categories, categoryId, otherText) {
   if (categoryId === "other" && otherText) return otherText;
   return categoryLabel(categories, categoryId);
+}
+
+// Every category an org serves: its primary one plus any in `alsoServes`.
+// The primary still drives the badge and stays first, so a multi-category org
+// reads as one clear thing rather than a pile of labels.
+function orgCategoryIds(org) {
+  const ids = [org.categoryId, ...(org.alsoServes || [])];
+  return ids.filter((id, i) => id && ids.indexOf(id) === i);
+}
+
+function orgServesCategory(org, categoryId) {
+  return orgCategoryIds(org).includes(categoryId);
 }
 
 // Local YYYY-MM-DD. Deliberately NOT toISOString(), which converts to UTC —

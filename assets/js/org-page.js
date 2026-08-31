@@ -51,24 +51,12 @@
       donateLink.hidden = false;
     }
 
-    const shareWrap = document.getElementById("org-share");
-    const pageUrl = window.location.href;
-    const fb = document.createElement("a");
-    fb.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
-    fb.target = "_blank";
-    fb.rel = "noopener";
-    fb.title = "Share on Facebook";
-    fb.setAttribute("aria-label", `Share ${org.name} on Facebook`);
-    fb.innerHTML = iconSvg("facebook", 18);
-    const x = document.createElement("a");
-    x.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(`Check out ${org.name} in the 209 Nonprofit Collective:`)}`;
-    x.target = "_blank";
-    x.rel = "noopener";
-    x.title = "Share on X";
-    x.setAttribute("aria-label", `Share ${org.name} on X`);
-    x.innerHTML = iconSvg("x", 18);
-    shareWrap.appendChild(fb);
-    shareWrap.appendChild(x);
+    renderShare(document.getElementById("org-share"), {
+      url: window.location.href,
+      kind: "org",
+      data: { name: org.name, tagline: org.tagline },
+      variant: "icons",
+    });
 
     const metaRow = document.getElementById("org-meta-row");
     metaRow.innerHTML = "";

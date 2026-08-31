@@ -41,6 +41,7 @@ function decodeJwtPayload(token) {
   const categorySelect = document.getElementById("edit-category");
   const categoryOtherField = document.getElementById("category-other-field");
   const categoryOtherInput = document.getElementById("edit-category-other");
+  const alsoServesWrap = document.getElementById("also-serves");
   const taglineInput = document.getElementById("edit-tagline");
   const descriptionInput = document.getElementById("edit-description");
   const websiteInput = document.getElementById("edit-website");
@@ -110,6 +111,7 @@ function decodeJwtPayload(token) {
     pendingBanner: null,
     categoryId: "",
     categoryOther: "",
+    alsoServes: [],
     tagline: "",
     description: "",
     website: "",
@@ -156,6 +158,37 @@ function decodeJwtPayload(token) {
     state.themeColor = accent;
     if (accent2 && /^#[0-9A-Fa-f]{6}$/.test(accent2)) state.themeColor2 = accent2;
     applyThemeVars();
+  }
+
+  // Additional categories this org serves. The primary category is shown as
+  // a locked, checked row so it's obvious it already counts and can't be
+  // duplicated here.
+  function renderAlsoServes() {
+    if (!alsoServesWrap) return;
+    alsoServesWrap.innerHTML = "";
+    categories.forEach((c) => {
+      const isPrimary = c.id === state.categoryId;
+      const label = document.createElement("label");
+      label.className = "checkbox-row" + (isPrimary ? " is-primary" : "");
+
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = c.id;
+      box.checked = isPrimary || state.alsoServes.includes(c.id);
+      box.disabled = isPrimary;
+      box.addEventListener("change", () => {
+        state.alsoServes = box.checked
+          ? [...state.alsoServes, c.id]
+          : state.alsoServes.filter((id) => id !== c.id);
+      });
+
+      const text = document.createElement("span");
+      text.textContent = c.label + (isPrimary ? " — your main category" : "");
+
+      label.appendChild(box);
+      label.appendChild(text);
+      alsoServesWrap.appendChild(label);
+    });
   }
 
   // Click-to-change overlay, re-attached after every render since both
@@ -239,6 +272,7 @@ function decodeJwtPayload(token) {
 
     state.categoryId = org.categoryId || "";
     state.categoryOther = org.categoryOther || "";
+    state.alsoServes = (org.alsoServes || []).slice();
     state.tagline = org.tagline || "";
     state.description = org.description || "";
     state.website = org.website || "";
@@ -253,6 +287,7 @@ function decodeJwtPayload(token) {
     categorySelect.value = state.categoryId;
     categoryOtherInput.value = state.categoryOther;
     categoryOtherField.hidden = state.categoryId !== "other";
+    renderAlsoServes();
     taglineInput.value = state.tagline;
     descriptionInput.value = state.description;
     websiteInput.value = state.website;
@@ -329,7 +364,11 @@ function decodeJwtPayload(token) {
 
   categorySelect.addEventListener("change", () => {
     state.categoryId = categorySelect.value;
+    // The new primary shouldn't also sit in alsoServes — that would double
+    // count it and list the org twice under the same need.
+    state.alsoServes = state.alsoServes.filter((id) => id !== state.categoryId);
     categoryOtherField.hidden = state.categoryId !== "other";
+    renderAlsoServes();
     renderPreview();
   });
   taglineInput.addEventListener("input", () => { state.tagline = taglineInput.value; renderPreview(); });
@@ -488,6 +527,7 @@ function decodeJwtPayload(token) {
       themeColor2: state.themeColor2,
       categoryId: state.categoryId || undefined,
       categoryOther: state.categoryId === "other" ? state.categoryOther || undefined : undefined,
+      alsoServes: state.alsoServes,
       tagline: state.tagline || undefined,
       description: state.description || undefined,
       website: state.website || undefined,
@@ -542,6 +582,7 @@ function decodeJwtPayload(token) {
       banner: state.pendingBanner || undefined,
       categoryId: state.categoryId || undefined,
       categoryOther: state.categoryId === "other" ? state.categoryOther || undefined : undefined,
+      alsoServes: state.alsoServes,
       tagline: state.tagline || undefined,
       description: state.description || undefined,
       website: state.website || undefined,
@@ -561,6 +602,7 @@ function decodeJwtPayload(token) {
       `Organization: ${current.name} (${current.slug})`,
       "",
       `Category: ${orgCategoryLabel(categories, state.categoryId, state.categoryOther)}`,
+      `Also serves: ${state.alsoServes.map((id) => categoryLabel(categories, id)).join(", ") || "(none)"}`,
       `Tagline: ${state.tagline}`,
       `Description: ${state.description}`,
       `Website: ${state.website}`,

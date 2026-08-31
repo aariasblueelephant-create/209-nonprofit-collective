@@ -20,6 +20,11 @@
   <meta name="twitter:description" content="Member tools for updating your 209 Nonprofit Collective profile." />
   <meta name="twitter:image" content="https://aariasblueelephant-create.github.io/209-nonprofit-collective/assets/img/og-card.jpg" />
   <meta name="theme-color" content="#04060C" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -97,6 +102,12 @@
         <div class="form-field">
           <label for="edit-category">Category</label>
           <select id="edit-category" name="category"></select>
+        </div>
+
+        <div class="form-field">
+          <label>Also serves</label>
+          <p class="field-hint">Tick anything else your organization genuinely works on. You'll show up under each of these when people search or browse by need — your main category above stays the one on your badge.</p>
+          <div class="checkbox-grid" id="also-serves"></div>
         </div>
 
         <div class="form-field" id="category-other-field" hidden>

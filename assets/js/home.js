@@ -284,6 +284,7 @@ function initSpotlight(categories, orgs) {
   try {
     const [categories, orgs] = await Promise.all([loadCategories(), loadAllOrgs()]);
 
+    renderShare(document.getElementById("site-share"), { kind: "site" });
     initHeroOrbs(orgs);
     initJoinedTicker(orgs);
     initSpotlight(categories, orgs);

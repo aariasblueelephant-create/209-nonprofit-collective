@@ -390,9 +390,18 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 .hero { padding: var(--s9) 0 var(--s8); position: relative; }
 .hero .container {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: var(--s8);
+  /* Photo side gets the larger share — there's real estate for it and the
+     copy column reads fine narrower. */
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: var(--s7);
   align-items: center;
+}
+/* On large screens the whole page breathes wider so the hero photo gets real
+   estate. Widening only the hero left the nav visibly inset against it, so
+   the container itself scales — the copy column stays a readable measure
+   because the hero grid gives the photo the larger share. */
+@media (min-width: 1100px) {
+  .container { width: min(1320px, 100% - 56px); }
 }
 
 .hero-kicker {
@@ -936,6 +945,42 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 .results-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s5); flex-wrap: wrap; }
 .results-head h3 { margin: 0 0 2px; font-size: 1.3rem; }
 
+/* ---------- 15d. Share block ---------- */
+.share-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s5);
+  flex-wrap: wrap;
+  margin-top: var(--s8);
+  padding: var(--s5) var(--s6);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--lift), var(--shadow-1);
+}
+.share-block h3 { margin: 0 0 4px; }
+.share-block p { margin: 0; color: var(--text-dim); font-size: 0.92rem; max-width: 52ch; }
+.share-actions { display: flex; gap: var(--s2); flex-wrap: wrap; }
+
+/* Compact icon variant (org profile header) */
+.share-icons .share-copy-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: var(--text-dim);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.share-icons .share-copy-icon:hover { color: var(--org-accent); border-color: var(--org-accent); transform: translateY(-2px); }
+
 /* ---------- 16. Member spotlight ---------- */
 .spotlight-layout {
   display: grid;
@@ -1271,6 +1316,24 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; color: var
   cursor: pointer;
 }
 .color-row input[type="text"] { flex: 1; font-family: ui-monospace, Menlo, monospace; }
+
+.checkbox-grid { display: grid; gap: 2px; }
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.checkbox-row:hover { background: var(--surface); color: var(--text); }
+.checkbox-row input { width: 17px; height: 17px; accent-color: var(--aqua); cursor: pointer; flex-shrink: 0; }
+.checkbox-row.is-primary { color: var(--aqua); cursor: default; }
+.checkbox-row.is-primary:hover { background: none; }
+.checkbox-row.is-primary input { cursor: default; }
 
 .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: var(--s2); }
 .theme-preset {

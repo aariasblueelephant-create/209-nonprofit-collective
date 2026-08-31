@@ -10,13 +10,14 @@ const HELP_EMAIL = "contact@aariasblueelephant.org";
   const emailBtn = document.getElementById("help-email");
 
   emailBtn.href = `mailto:${HELP_EMAIL}?subject=${encodeURIComponent("I'm looking for help in the 209")}`;
+  renderShare(document.getElementById("help-share"), { kind: "help" });
 
   let categories = [];
   let orgs = [];
   let needs = [];
 
   function orgsForNeed(need) {
-    return orgs.filter((o) => need.categoryIds.includes(o.categoryId));
+    return orgs.filter((o) => orgCategoryIds(o).some((id) => need.categoryIds.includes(id)));
   }
 
   function showNeed(need) {

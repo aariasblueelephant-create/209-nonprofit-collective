@@ -2,6 +2,9 @@
   "slug": "aarias-blue-elephant",
   "name": "Aaria's Blue Elephant",
   "categoryId": "special-needs-disability",
+  "alsoServes": [
+    "youth-family"
+  ],
   "logo": "assets/logos/aarias-blue-elephant.png",
   "tagline": "Building a more inclusive world for kids of all abilities.",
   "description": "Aaria's Blue Elephant is a 501(c)(3) nonprofit dedicated to inclusion for children with special needs across San Joaquin County. We organize adaptive events, social programs, and community resources so every kid gets the place they deserve.",
