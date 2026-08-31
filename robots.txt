@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /edit.html
+
+Sitemap: https://aariasblueelephant-create.github.io/209-nonprofit-collective/sitemap.xml

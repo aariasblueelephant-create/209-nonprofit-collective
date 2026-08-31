@@ -24,6 +24,9 @@ const ICON_PATHS = {
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   megaphone: '<path d="m3 11 15-7v16l-15-7Z"/><path d="M3 11v4a2 2 0 0 0 2 2h2M8 17v4"/>',
+  home: '<path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 21v-8h6v8"/>',
+  lifebuoy: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.9 4.9 4.3 4.3M14.8 14.8l4.3 4.3M14.8 9.2l4.3-4.3M4.9 19.1l4.3-4.3"/>',
+  arrowLeft: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
 };
 
 function iconSvg(name, size) {

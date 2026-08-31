@@ -1,0 +1,66 @@
+[
+  {
+    "id": "food-housing",
+    "icon": "home",
+    "label": "Food, housing & basic needs",
+    "blurb": "Groceries, meals, rent or utility help, clothing, and shelter.",
+    "examples": ["I need groceries", "help with rent", "somewhere to stay", "utility bills"],
+    "categoryIds": ["housing-basic-needs"]
+  },
+  {
+    "id": "disability",
+    "icon": "heart",
+    "label": "Disability & special needs support",
+    "blurb": "Programs, therapies, inclusive activities, and family support for children and adults with disabilities.",
+    "examples": ["my child has autism", "inclusive activities", "IEP help", "adaptive sports"],
+    "categoryIds": ["special-needs-disability"]
+  },
+  {
+    "id": "kids",
+    "icon": "users",
+    "label": "Kids, teens & families",
+    "blurb": "After-school programs, mentorship, childcare, parenting support, and youth activities.",
+    "examples": ["after-school programs", "mentor for my teen", "summer activities"],
+    "categoryIds": ["youth-family", "education"]
+  },
+  {
+    "id": "health",
+    "icon": "shield",
+    "label": "Health & wellness",
+    "blurb": "Clinics, mental health support, wellness programs, and health education.",
+    "examples": ["mental health support", "free clinic", "wellness classes"],
+    "categoryIds": ["health-wellness"]
+  },
+  {
+    "id": "learning",
+    "icon": "layers",
+    "label": "Education & tutoring",
+    "blurb": "Tutoring, literacy, scholarships, job skills, and adult learning.",
+    "examples": ["tutoring", "scholarships", "job training", "ESL classes"],
+    "categoryIds": ["education"]
+  },
+  {
+    "id": "veterans",
+    "icon": "shield",
+    "label": "Veterans & military families",
+    "blurb": "Benefits navigation, housing, employment, and community for those who served.",
+    "examples": ["VA benefits help", "veteran housing", "job placement"],
+    "categoryIds": ["veterans-military"]
+  },
+  {
+    "id": "animals",
+    "icon": "heart",
+    "label": "Animals & pets",
+    "blurb": "Adoption, rescue, fostering, pet food assistance, and spay/neuter programs.",
+    "examples": ["adopt a pet", "found a stray", "pet food help"],
+    "categoryIds": ["animal-welfare"]
+  },
+  {
+    "id": "community",
+    "icon": "sparkle",
+    "label": "Arts, environment & community",
+    "blurb": "Local arts and music, environmental efforts, and neighbourhood development.",
+    "examples": ["community events", "art programs", "clean-up days"],
+    "categoryIds": ["arts-culture", "environment", "community-development"]
+  }
+]

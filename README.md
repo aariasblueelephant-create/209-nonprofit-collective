@@ -142,6 +142,59 @@ If a signed-in email isn't listed in `editors.json` for that org, or the Worker 
 5. **Wire the frontend to the Worker**: in `assets/js/edit.js`, set `GOOGLE_CLIENT_ID` to the value from step 2 and `WORKER_URL` to the URL from step 4.
 6. **Add editors** by adding `{ "email": "...", "slug": "..." }` entries to `data/editors.json` and committing — this is the allowlist of who can publish for which org.
 
+## The "Find Help" page
+
+`help.html` is the community-facing entry point — it lets someone who needs
+support browse by **what they need** rather than by organisation name.
+
+`data/needs.json` maps each human-phrased need (e.g. "Food, housing & basic
+needs") to one or more `categoryIds` from `data/categories.json`. Selecting a
+need lists every member org in those categories. Needs with no matching member
+say so honestly rather than showing an empty result.
+
+Each need is deep-linkable as `help.html?need=<id>`, so you can send someone
+straight to the relevant list.
+
+The page opens with a crisis notice pointing to 911, 211 (local resource
+line) and 988 (Suicide & Crisis Lifeline) — this directory is not an
+emergency service and shouldn't be presented as one. Keep that notice.
+
+## SEO and social sharing
+
+Every page carries a description, canonical URL, Open Graph and Twitter Card
+tags, pointing at `assets/img/og-card.jpg` (1200×630). `edit.html` is
+additionally marked `noindex` since it's a member tool, not content.
+
+`sitemap.xml` is generated from `data/manifest.json` — after adding or
+removing an org, run:
+
+```bash
+node tools/build-sitemap.js
+```
+
+It skips any slug starting with `_` so local test fixtures never get indexed.
+
+**Known limitation:** Facebook, LinkedIn and X do not execute JavaScript when
+they crawl a link, so a shared `org.html?slug=…` link previews with the
+collective's generic card rather than that specific org's logo and tagline.
+Per-org previews would require pre-generating a static HTML file per
+organisation, which would mean adding a build step. Not done deliberately —
+raise it if per-org share cards become important.
+
+## Accessibility
+
+Deliberate choices worth preserving:
+
+- Every page has a skip-to-content link and a `<main id="main">` landmark.
+- `:focus-visible` shows a 3px focus ring; elements focused *programmatically*
+  (`[tabindex="-1"]`) suppress it, since they aren't tab-reachable.
+- `--text-faint` is `#6E7A93` (4.70:1 on the background). The previous
+  `#5D6980` measured 3.66:1 and failed the WCAG AA 4.5:1 minimum — don't
+  darken it back without re-checking contrast.
+- The recently-joined ticker duplicates its content for a seamless loop; the
+  second copy is `aria-hidden` so orgs aren't announced twice.
+- All motion respects `prefers-reduced-motion`.
+
 ## The shared event calendar
 
 Any member can "claim" a spot on the shared calendar by adding an entry to their own `events` array — there's no separate approval beyond already being a vetted member. Events with a `date` today or later show up automatically, sorted soonest-first, on both the homepage ("Upcoming Events") and the org's own profile page. Past events simply age out of both lists on their own — nothing needs to be deleted.

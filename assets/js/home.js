@@ -56,8 +56,10 @@ function initJoinedTicker(orgs) {
         ${iconSvg("sparkle", 14)} Welcome <strong>${org.name}</strong> — joined ${formatDate(org.joinedDate)}
       </a>`)
     .join("");
-  // Duplicated once so the scroll can loop seamlessly at -50% instead of jumping.
-  track.innerHTML = itemHtml + itemHtml;
+  // Duplicated once so the scroll can loop seamlessly at -50% instead of
+  // jumping. The second copy is aria-hidden so screen readers don't announce
+  // every organisation twice.
+  track.innerHTML = `<span>${itemHtml}</span><span aria-hidden="true">${itemHtml}</span>`;
   ticker.hidden = false;
 }
 
@@ -244,6 +246,7 @@ function initSpotlight(categories, orgs) {
         const dot = document.createElement("button");
         dot.type = "button";
         dot.className = "spotlight-dot";
+        dot.setAttribute("aria-label", `Show ${orgs[i].name}`);
         dot.addEventListener("click", () => {
           activeIndex = i;
           render();

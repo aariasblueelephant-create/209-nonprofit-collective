@@ -29,9 +29,11 @@
   --org-accent-2: var(--amber);
 
   /* Text ramp */
-  --text: #EEF3FF;
-  --text-dim: #96A3BD;
-  --text-faint: #5D6980;
+  --text: #EEF3FF;      /* 18.2:1 on --bg */
+  --text-dim: #96A3BD;  /*  8.0:1 on --bg */
+  /* Was #5D6980, which measured 3.66:1 — below the WCAG AA 4.5:1 minimum
+     for body text. #6E7A93 measures 4.70:1 and still reads as muted. */
+  --text-faint: #6E7A93;
 
   /* Type */
   --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -86,6 +88,32 @@ body {
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 button { font-family: inherit; }
+
+/* Keyboard focus must always be clearly visible. :focus-visible keeps it off
+   mouse clicks while guaranteeing keyboard users can see where they are. */
+:focus-visible {
+  outline: 3px solid var(--aqua);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Elements we focus programmatically to move screen-reader position (the
+   skip-link target, the results heading). They aren't tab-reachable, so a
+   ring adds no navigational value and visually collides with nearby text. */
+[tabindex="-1"]:focus { outline: none; }
+
+.skip-link {
+  position: absolute;
+  left: var(--s4);
+  top: -60px;
+  z-index: 200;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  background: var(--aqua);
+  color: #04121A;
+  font-weight: 700;
+  transition: top 0.25s var(--ease);
+}
+.skip-link:focus { top: var(--s4); }
 
 .container { width: min(1180px, 100% - 48px); margin-inline: auto; }
 
@@ -833,6 +861,80 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 @media (max-width: 980px) {
   .calendar-layout { grid-template-columns: 1fr; }
 }
+
+/* ---------- 15c. Find Help ---------- */
+.crisis-note {
+  display: flex;
+  gap: var(--s4);
+  align-items: flex-start;
+  padding: var(--s4) var(--s5);
+  margin-bottom: var(--s6);
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--amber) 34%, transparent);
+  background: color-mix(in srgb, var(--amber) 9%, transparent);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.crisis-note .icon { color: var(--amber); margin-top: 2px; }
+.crisis-note strong { color: var(--text); display: block; margin-bottom: 2px; }
+.crisis-note a { color: var(--amber); font-weight: 700; }
+
+.needs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: var(--s4); }
+.need-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s2);
+  text-align: left;
+  padding: var(--s5);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--lift), var(--shadow-1);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease);
+}
+.need-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--aqua) 45%, transparent);
+  box-shadow: var(--lift), var(--shadow-2);
+}
+.need-icon {
+  display: grid;
+  place-items: center;
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  margin-bottom: var(--s2);
+  color: #04121A;
+  background: linear-gradient(140deg, var(--aqua), var(--amber));
+  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--aqua) 70%, transparent);
+}
+.need-label { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.02em; }
+.need-blurb { font-size: 0.89rem; color: var(--text-dim); }
+.need-examples { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--s2); }
+.need-examples span {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 3px 9px;
+}
+.need-count {
+  margin-top: var(--s3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--aqua);
+}
+
+.results-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s5); flex-wrap: wrap; }
+.results-head h3 { margin: 0 0 2px; font-size: 1.3rem; }
 
 /* ---------- 16. Member spotlight ---------- */
 .spotlight-layout {

@@ -58,12 +58,14 @@
     fb.target = "_blank";
     fb.rel = "noopener";
     fb.title = "Share on Facebook";
+    fb.setAttribute("aria-label", `Share ${org.name} on Facebook`);
     fb.innerHTML = iconSvg("facebook", 18);
     const x = document.createElement("a");
     x.href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(`Check out ${org.name} in the 209 Nonprofit Collective:`)}`;
     x.target = "_blank";
     x.rel = "noopener";
     x.title = "Share on X";
+    x.setAttribute("aria-label", `Share ${org.name} on X`);
     x.innerHTML = iconSvg("x", 18);
     shareWrap.appendChild(fb);
     shareWrap.appendChild(x);
