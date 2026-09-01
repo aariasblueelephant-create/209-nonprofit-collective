@@ -140,6 +140,15 @@ button { font-family: inherit; }
 .aurora-3 { width: 52vw; height: 42vw; left: 22vw;  top: 46vh;   background: radial-gradient(circle, var(--amber), transparent 70%); opacity: 0.24; animation: drift-3 38s ease-in-out infinite; }
 .aurora-4 { width: 36vw; height: 36vw; right: 6vw;  bottom: -12vw; background: radial-gradient(circle, var(--rose), transparent 70%); opacity: 0.2; animation: drift-2 30s ease-in-out infinite reverse; }
 
+/* On a themed page the ambient blobs adopt the organisation's own colours.
+   Without this the fixed aurora keeps the site palette and visually
+   dominates, so picking a theme barely registered. */
+body.is-themed .aurora { transition: background 0.6s var(--ease); }
+body.is-themed .aurora-1 { background: radial-gradient(circle, var(--org-accent), transparent 68%); opacity: 0.6; }
+body.is-themed .aurora-2 { background: radial-gradient(circle, var(--org-accent-2), transparent 68%); opacity: 0.5; }
+body.is-themed .aurora-3 { background: radial-gradient(circle, var(--org-accent), transparent 70%); opacity: 0.34; }
+body.is-themed .aurora-4 { background: radial-gradient(circle, var(--org-accent-2), transparent 70%); opacity: 0.3; }
+
 @keyframes drift-1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(6vw, 5vh) scale(1.12); } }
 @keyframes drift-2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-5vw, 7vh) scale(1.08); } }
 @keyframes drift-3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(4vw,-6vh) scale(1.15); } }
@@ -1072,7 +1081,22 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
   font-weight: 700;
   margin-top: var(--s3);
 }
-.spotlight-dots { display: flex; gap: var(--s2); margin-top: var(--s6); }
+.spotlight-dots { display: flex; align-items: center; gap: var(--s2); margin-top: var(--s6); }
+.spotlight-arrow {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.2s var(--ease);
+}
+.spotlight-arrow:hover { color: var(--aqua); border-color: var(--aqua); }
+.spotlight-arrow:active { transform: scale(0.93); }
+.spotlight-arrow:first-child { margin-right: var(--s2); }
+.spotlight-arrow:last-child { margin-left: var(--s2); }
 .spotlight-dot {
   width: 26px; height: 4px;
   border-radius: 2px;
@@ -1086,9 +1110,16 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 /* ---------- 17. Org profile ---------- */
 #org-content {
   background:
-    radial-gradient(ellipse 1000px 520px at 50% 0, color-mix(in srgb, var(--org-accent) 15%, transparent), transparent 70%),
-    radial-gradient(ellipse 800px 460px at 100% 45%, color-mix(in srgb, var(--org-accent-2) 10%, transparent), transparent 70%);
+    radial-gradient(ellipse 1100px 560px at 50% 0, color-mix(in srgb, var(--org-accent) 26%, transparent), transparent 68%),
+    radial-gradient(ellipse 850px 500px at 100% 42%, color-mix(in srgb, var(--org-accent-2) 20%, transparent), transparent 68%),
+    radial-gradient(ellipse 750px 520px at 0% 78%, color-mix(in srgb, var(--org-accent) 14%, transparent), transparent 70%);
 }
+/* Nav and footer pick up the tint too, so the theme reads as the whole page
+   rather than a coloured band in the middle. */
+body.is-themed .site-nav { border-bottom-color: color-mix(in srgb, var(--org-accent) 30%, transparent); }
+body.is-themed .site-footer { border-top-color: color-mix(in srgb, var(--org-accent) 26%, transparent); }
+body.is-themed .brand .grad-text { background: linear-gradient(100deg, var(--org-accent), var(--org-accent-2)); -webkit-background-clip: text; background-clip: text; }
+body.is-themed .nav-links a.active::after { background: linear-gradient(90deg, var(--org-accent), var(--org-accent-2)); }
 .org-header { border-bottom: 1px solid var(--border); }
 .org-banner {
   width: 100%;
@@ -1316,6 +1347,107 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; color: var
   cursor: pointer;
 }
 .color-row input[type="text"] { flex: 1; font-family: ui-monospace, Menlo, monospace; }
+
+/* Edit form: tabs keep a long form from becoming an endless scroll */
+.edit-card { padding: var(--s5); position: sticky; top: 90px; }
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: var(--s5);
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+}
+.tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 8px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s var(--ease), color 0.25s var(--ease);
+}
+.tab:hover { color: var(--text); }
+.tab.is-active {
+  background: linear-gradient(135deg, var(--org-accent), var(--org-accent-2));
+  color: #04121A;
+}
+.tab-panel { display: none; }
+.tab-panel.is-active { display: block; animation: tab-in 0.35s var(--ease); }
+@keyframes tab-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.edit-actions {
+  margin-top: var(--s5);
+  padding-top: var(--s5);
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--s2);
+}
+.edit-actions .btn { width: 100%; justify-content: center; }
+
+/* Event rows — collapsed by default so a long list stays scannable */
+.event-edit {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--s2);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+.event-edit-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: background 0.2s var(--ease);
+}
+.event-edit-head:hover { background: var(--surface); }
+.event-edit-title { flex: 1; min-width: 0; display: grid; }
+.event-edit-title strong { font-size: 0.92rem; font-weight: 600; }
+.event-edit-title span { font-size: 0.76rem; color: var(--text-faint); }
+.event-edit-del {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-faint);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.event-edit-del:hover { color: var(--rose); border-color: var(--rose); }
+.event-edit-body { display: none; padding: 4px 14px 14px; border-top: 1px solid var(--border); }
+.event-edit.is-open .event-edit-body { display: block; }
+.event-edit.is-open { border-color: color-mix(in srgb, var(--org-accent) 45%, transparent); }
+.add-event-btn { width: 100%; justify-content: center; margin-top: var(--s3); }
+
+.color-pair { display: flex; align-items: flex-end; gap: var(--s3); }
+.color-pick { display: grid; gap: 4px; }
+.color-pick span { font-size: 0.74rem; color: var(--text-faint); font-weight: 600; }
+.color-pick input[type="color"] {
+  width: 56px; height: 42px;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+.color-pair input[type="text"] { flex: 1; font-family: ui-monospace, Menlo, monospace; }
+
+@media (max-width: 980px) {
+  .edit-card { position: static; }
+}
 
 .checkbox-grid { display: grid; gap: 2px; }
 .checkbox-row {

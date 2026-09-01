@@ -15,12 +15,16 @@
 
     document.title = `${org.name} · 209 Nonprofit Collective`;
 
+    const hasTheme = (org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor))
+      || (org.themeColor2 && /^#[0-9a-fA-F]{6}$/.test(org.themeColor2));
     if (org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor)) {
       document.documentElement.style.setProperty("--org-accent", org.themeColor);
     }
     if (org.themeColor2 && /^#[0-9a-fA-F]{6}$/.test(org.themeColor2)) {
       document.documentElement.style.setProperty("--org-accent-2", org.themeColor2);
     }
+    // Lets the ambient aurora, nav and footer adopt the org's colours.
+    if (hasTheme) document.body.classList.add("is-themed");
 
     const editLink = `edit.html?slug=${encodeURIComponent(slug)}`;
     document.getElementById("nav-edit-link").href = editLink;

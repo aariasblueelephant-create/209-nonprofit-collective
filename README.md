@@ -221,6 +221,15 @@ Deliberate choices worth preserving:
   second copy is `aria-hidden` so orgs aren't announced twice.
 - All motion respects `prefers-reduced-motion`.
 
+## Adding events from the edit page
+
+The **Events** tab on `edit.html` adds, edits and deletes an org's events —
+no JSON editing needed. Rows are collapsed by default and sorted by date, and
+deleting asks for confirmation since it can't be undone from the page.
+
+Event photos are a **link** to an already-hosted image, never an upload — see
+the note on `image` in the schema above for why.
+
 ## The shared event calendar
 
 Any member can "claim" a spot on the shared calendar by adding an entry to their own `events` array — there's no separate approval beyond already being a vetted member. Events with a `date` today or later show up automatically, sorted soonest-first, on both the homepage ("Upcoming Events") and the org's own profile page. Past events simply age out of both lists on their own — nothing needs to be deleted.

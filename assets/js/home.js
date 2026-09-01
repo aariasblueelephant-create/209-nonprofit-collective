@@ -191,7 +191,11 @@ function initSpotlight(categories, orgs) {
 
   let activeIndex = 0;
   const cards = orgs.map((org) => {
-    const card = document.createElement("div");
+    // The whole card is the link to the profile — that's what people expect
+    // when they click a card. Advancing the stack is handled by the arrows
+    // and dots below it instead.
+    const card = document.createElement("a");
+    card.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
     card.className = "spotlight-card";
     if (org.themeColor && /^#[0-9a-fA-F]{6}$/.test(org.themeColor)) {
       card.style.setProperty("--spotlight-accent", org.themeColor);
@@ -213,11 +217,10 @@ function initSpotlight(categories, orgs) {
     tagline.className = "spotlight-tagline";
     tagline.textContent = org.tagline || "";
 
-    const link = document.createElement("a");
+    // Visual affordance only — the whole card is already the link.
+    const link = document.createElement("span");
     link.className = "spotlight-link";
-    link.href = `org.html?slug=${encodeURIComponent(org.slug)}`;
     link.innerHTML = `View Profile ${iconSvg("arrowRight", 16)}`;
-    link.addEventListener("click", (e) => e.stopPropagation());
 
     card.appendChild(avatar);
     card.appendChild(badge);
@@ -225,36 +228,47 @@ function initSpotlight(categories, orgs) {
     card.appendChild(tagline);
     card.appendChild(link);
 
-    if (orgs.length > 1) {
-      const hint = document.createElement("div");
-      hint.className = "spotlight-hint";
-      hint.textContent = "Click card for next →";
-      card.appendChild(hint);
-      card.addEventListener("click", () => {
-        activeIndex = (activeIndex + 1) % orgs.length;
-        render();
-      });
-    }
-
     attachTilt(card, 8);
     stack.appendChild(card);
     return card;
   });
 
-  const dots = orgs.length > 1
-    ? orgs.map((_, i) => {
-        const dot = document.createElement("button");
-        dot.type = "button";
-        dot.className = "spotlight-dot";
-        dot.setAttribute("aria-label", `Show ${orgs[i].name}`);
-        dot.addEventListener("click", () => {
-          activeIndex = i;
-          render();
-        });
-        dotsWrap.appendChild(dot);
-        return dot;
-      })
-    : [];
+  let dots = [];
+  if (orgs.length > 1) {
+    const step = (delta) => {
+      activeIndex = (activeIndex + delta + orgs.length) % orgs.length;
+      render();
+    };
+
+    const prev = document.createElement("button");
+    prev.type = "button";
+    prev.className = "spotlight-arrow";
+    prev.setAttribute("aria-label", "Previous organization");
+    prev.innerHTML = iconSvg("arrowLeft", 17);
+    prev.addEventListener("click", () => step(-1));
+    dotsWrap.appendChild(prev);
+
+    dots = orgs.map((_, i) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "spotlight-dot";
+      dot.setAttribute("aria-label", `Show ${orgs[i].name}`);
+      dot.addEventListener("click", () => {
+        activeIndex = i;
+        render();
+      });
+      dotsWrap.appendChild(dot);
+      return dot;
+    });
+
+    const next = document.createElement("button");
+    next.type = "button";
+    next.className = "spotlight-arrow";
+    next.setAttribute("aria-label", "Next organization");
+    next.innerHTML = iconSvg("arrowRight", 17);
+    next.addEventListener("click", () => step(1));
+    dotsWrap.appendChild(next);
+  }
 
   function render() {
     cards.forEach((card, i) => {

@@ -25,6 +25,7 @@ const EDITABLE_FIELDS = [
   "donateUrl",
   "supportUrl",
   "programs",
+  "events",
 ];
 
 // The client already compresses images to well under these before sending —

@@ -54,6 +54,9 @@ function decodeJwtPayload(token) {
   const programsInput = document.getElementById("edit-programs");
   const colorPicker = document.getElementById("edit-color");
   const colorHex = document.getElementById("edit-color-hex");
+  const colorPicker2 = document.getElementById("edit-color2");
+  const eventsEditor = document.getElementById("events-editor");
+  const addEventBtn = document.getElementById("add-event");
   const themeGrid = document.getElementById("theme-grid");
   const logoInput = document.getElementById("edit-logo");
   const bannerInput = document.getElementById("edit-banner");
@@ -139,6 +142,7 @@ function decodeJwtPayload(token) {
     donateUrl: "",
     supportUrl: "",
     programs: [],
+    events: [],
   };
 
   function displayLogo() { return state.pendingLogo || state.currentLogo; }
@@ -162,7 +166,11 @@ function decodeJwtPayload(token) {
   function applyThemeVars() {
     document.documentElement.style.setProperty("--org-accent", state.themeColor);
     document.documentElement.style.setProperty("--org-accent-2", state.themeColor2);
+    // Same flag the org page sets, so the edit screen previews the full
+    // ambient wash rather than just recolouring a badge.
+    document.body.classList.add("is-themed");
     colorPicker.value = state.themeColor;
+    colorPicker2.value = state.themeColor2;
     colorHex.value = state.themeColor;
     setActiveThemeCard();
   }
@@ -205,6 +213,130 @@ function decodeJwtPayload(token) {
       label.appendChild(box);
       label.appendChild(text);
       alsoServesWrap.appendChild(label);
+    });
+  }
+
+  // --- Tabs -----------------------------------------------------------
+  const tabs = [...document.querySelectorAll(".tab")];
+  const panels = [...document.querySelectorAll(".tab-panel")];
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.classList.toggle("is-active", on);
+        t.setAttribute("aria-selected", String(on));
+      });
+      panels.forEach((p) => p.classList.toggle("is-active", p.dataset.panel === tab.dataset.tab));
+    });
+  });
+
+  // --- Events editor ---------------------------------------------------
+  // Each event is a collapsible row so a long list stays scannable.
+  function renderEvents() {
+    if (!eventsEditor) return;
+    eventsEditor.innerHTML = "";
+
+    if (state.events.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "field-hint";
+      empty.textContent = "No events yet. Add one and it'll show on the shared calendar.";
+      eventsEditor.appendChild(empty);
+      return;
+    }
+
+    const sorted = state.events
+      .map((ev, i) => ({ ev, i }))
+      .sort((a, b) => String(a.ev.date).localeCompare(String(b.ev.date)));
+
+    sorted.forEach(({ ev, i }) => {
+      const row = document.createElement("div");
+      row.className = "event-edit";
+
+      const head = document.createElement("div");
+      head.className = "event-edit-head";
+      const isPast = ev.date && ev.date < todayISO();
+      head.innerHTML = `
+        <div class="event-edit-title">
+          <strong>${ev.title || "Untitled event"}</strong>
+          <span>${ev.date ? formatDate(ev.date) : "No date set"}${isPast ? " · past" : ""}</span>
+        </div>`;
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "event-edit-del";
+      del.setAttribute("aria-label", `Delete ${ev.title || "event"}`);
+      del.innerHTML = iconSvg("x", 16);
+      del.addEventListener("click", () => {
+        // Deleting an event is destructive and can't be undone from here,
+        // so make the user confirm rather than losing it on a stray click.
+        if (!window.confirm(`Delete "${ev.title || "this event"}"? This can't be undone.`)) return;
+        state.events.splice(i, 1);
+        renderEvents();
+      });
+      head.appendChild(del);
+      row.appendChild(head);
+
+      const body = document.createElement("div");
+      body.className = "event-edit-body";
+      const fields = [
+        { key: "title", label: "Title", type: "text", ph: "Community Food Drive" },
+        { key: "date", label: "Date", type: "date", ph: "" },
+        { key: "time", label: "Time", type: "text", ph: "10:00 AM - 1:00 PM" },
+        { key: "location", label: "Location", type: "text", ph: "Mountain House Community Park" },
+        { key: "description", label: "Description", type: "textarea", ph: "Short description shown under the event." },
+        { key: "image", label: "Photo link", type: "url", ph: "https://… (a link, not an upload)" },
+        { key: "url", label: "Event / RSVP link", type: "url", ph: "https://…" },
+      ];
+      fields.forEach((f) => {
+        const wrap = document.createElement("div");
+        wrap.className = "form-field";
+        const label = document.createElement("label");
+        label.textContent = f.label;
+        const input = document.createElement(f.type === "textarea" ? "textarea" : "input");
+        if (f.type !== "textarea") input.type = f.type;
+        input.value = ev[f.key] || "";
+        input.placeholder = f.ph;
+        input.addEventListener("input", () => {
+          state.events[i][f.key] = input.value;
+        });
+        // Retitle/redate the collapsed header once the field loses focus.
+        if (f.key === "title" || f.key === "date") {
+          input.addEventListener("change", renderEvents);
+        }
+        wrap.appendChild(label);
+        wrap.appendChild(input);
+        body.appendChild(wrap);
+      });
+      row.appendChild(body);
+
+      head.addEventListener("click", (e) => {
+        if (e.target.closest(".event-edit-del")) return;
+        row.classList.toggle("is-open");
+      });
+
+      eventsEditor.appendChild(row);
+    });
+  }
+
+  if (addEventBtn) {
+    addEventBtn.addEventListener("click", () => {
+      state.events.push({
+        id: `evt-${state.events.length + 1}-${state.events.length}`,
+        title: "",
+        date: todayISO(),
+        time: "",
+        location: "",
+        description: "",
+      });
+      renderEvents();
+      // Open the one just added so it's immediately editable.
+      const rows = eventsEditor.querySelectorAll(".event-edit");
+      const last = [...rows].find((r) => r.querySelector("strong").textContent === "Untitled event");
+      if (last) {
+        last.classList.add("is-open");
+        const first = last.querySelector("input");
+        if (first) first.focus();
+      }
     });
   }
 
@@ -300,6 +432,7 @@ function decodeJwtPayload(token) {
     state.donateUrl = org.donateUrl || "";
     state.supportUrl = org.supportUrl || "";
     state.programs = org.programs || [];
+    state.events = JSON.parse(JSON.stringify(org.events || []));
 
     categorySelect.value = state.categoryId;
     categoryOtherInput.value = state.categoryOther;
@@ -315,6 +448,7 @@ function decodeJwtPayload(token) {
     donateInput.value = state.donateUrl;
     supportInput.value = state.supportUrl;
     programsInput.value = state.programs.join("\n");
+    renderEvents();
 
     applyThemeVars();
     renderPreview();
@@ -366,6 +500,7 @@ function decodeJwtPayload(token) {
 
   colorPicker.addEventListener("input", () => setTheme(colorPicker.value));
   colorHex.addEventListener("change", () => setTheme(colorHex.value.trim()));
+  colorPicker2.addEventListener("input", () => setTheme(state.themeColor, colorPicker2.value));
 
   categoryOtherInput.addEventListener("input", () => {
     state.categoryOther = categoryOtherInput.value;
@@ -555,6 +690,7 @@ function decodeJwtPayload(token) {
       donateUrl: state.donateUrl || undefined,
       supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
+      events: state.events,
     };
   }
 
@@ -610,6 +746,7 @@ function decodeJwtPayload(token) {
       donateUrl: state.donateUrl || undefined,
       supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
+      events: state.events,
     });
 
     if (await tryPublishLive()) return;
@@ -620,6 +757,7 @@ function decodeJwtPayload(token) {
       "",
       `Category: ${orgCategoryLabel(categories, state.categoryId, state.categoryOther)}`,
       `Also serves: ${state.alsoServes.map((id) => categoryLabel(categories, id)).join(", ") || "(none)"}`,
+      `Events: ${state.events.length ? state.events.map((e) => `${e.date} ${e.title}`).join("; ") : "(none)"}`,
       `Tagline: ${state.tagline}`,
       `Description: ${state.description}`,
       `Website: ${state.website}`,

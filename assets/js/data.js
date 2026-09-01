@@ -51,6 +51,7 @@ function applyLocalOverride(org) {
   if (override.donateUrl) merged.donateUrl = override.donateUrl;
   if (override.supportUrl) merged.supportUrl = override.supportUrl;
   if (override.programs && override.programs.length) merged.programs = override.programs;
+  if (override.events) merged.events = override.events;
   return merged;
 }
 

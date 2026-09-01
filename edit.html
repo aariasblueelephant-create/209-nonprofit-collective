@@ -94,119 +94,147 @@
     </div>
 
     <div class="reveal">
-      <form id="edit-form" class="side-card" style="padding: 32px;">
+      <form id="edit-form" class="side-card edit-card">
         <div class="form-field">
           <label for="edit-org">Your organization</label>
           <select id="edit-org" name="org" required></select>
         </div>
 
-        <div class="form-field">
-          <label for="edit-category">Category</label>
-          <select id="edit-category" name="category"></select>
+        <div class="tabs" role="tablist" aria-label="Edit sections">
+          <button type="button" class="tab is-active" role="tab" aria-selected="true" data-tab="basics">
+            <i data-icon="sparkle" data-icon-size="15"></i> Basics
+          </button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="contact">
+            <i data-icon="mail" data-icon-size="15"></i> Contact
+          </button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="look">
+            <i data-icon="image" data-icon-size="15"></i> Look
+          </button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="events">
+            <i data-icon="calendar" data-icon-size="15"></i> Events
+          </button>
         </div>
 
-        <div class="form-field">
-          <label>Also serves</label>
-          <p class="field-hint">Tick anything else your organization genuinely works on. You'll show up under each of these when people search or browse by need — your main category above stays the one on your badge.</p>
-          <div class="checkbox-grid" id="also-serves"></div>
-        </div>
-
-        <div class="form-field" id="category-other-field" hidden>
-          <label for="edit-category-other">Describe your category</label>
-          <input id="edit-category-other" name="categoryOther" type="text" maxlength="40" placeholder="e.g. Youth Mentorship" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-tagline">Tagline</label>
-          <input id="edit-tagline" name="tagline" type="text" placeholder="One line describing your mission" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-description">Description</label>
-          <textarea id="edit-description" name="description" placeholder="A longer paragraph shown on your profile page"></textarea>
-        </div>
-
-        <div class="form-field">
-          <label for="edit-website">Website</label>
-          <input id="edit-website" name="website" type="url" placeholder="https://" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-org-email">Contact email</label>
-          <input id="edit-org-email" name="orgEmail" type="email" placeholder="contact@example.org" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-phone">Phone</label>
-          <input id="edit-phone" name="phone" type="tel" placeholder="(209) 555-0100" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-ein">EIN</label>
-          <p class="field-hint">Your IRS Employer Identification Number, e.g. "12-3456789". Shown publicly for donor/verification trust.</p>
-          <input id="edit-ein" name="ein" type="text" placeholder="12-3456789" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-location">Location</label>
-          <p class="field-hint">City &amp; ZIP only — please don't include a street address here, that stays private to the vetting call.</p>
-          <input id="edit-location" name="location" type="text" placeholder="Mountain House, CA 95391" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-donate">Donate link</label>
-          <p class="field-hint">Shows a Donate button on your profile.</p>
-          <input id="edit-donate" name="donateUrl" type="url" placeholder="https://" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-support">Get involved link</label>
-          <p class="field-hint">Volunteer sign-up, sponsorship page, wish list — whatever you'd point a supporter to. Shown in the "Support this org" box. Leave blank to keep the default text there.</p>
-          <input id="edit-support" name="supportUrl" type="url" placeholder="https://" />
-        </div>
-
-        <div class="form-field">
-          <label for="edit-programs">Programs</label>
-          <p class="field-hint">One per line.</p>
-          <textarea id="edit-programs" name="programs" placeholder="Program One&#10;Program Two"></textarea>
-        </div>
-
-        <div class="form-field">
-          <label>Theme</label>
-          <p class="field-hint">Picks a coordinated two-color wash for the whole profile page — banner, badge, buttons, everything.</p>
-          <div class="theme-grid" id="theme-grid"></div>
-          <p class="field-hint" style="margin-top: 14px;">Or fine-tune the primary color:</p>
-          <div class="color-row">
-            <input id="edit-color" name="color" type="color" value="#22D3EE" />
-            <input id="edit-color-hex" type="text" value="#22D3EE" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" />
+        <!-- Basics -->
+        <div class="tab-panel is-active" data-panel="basics" role="tabpanel">
+          <div class="form-field">
+            <label for="edit-tagline">Tagline</label>
+            <input id="edit-tagline" name="tagline" type="text" placeholder="One line describing your mission" />
+          </div>
+          <div class="form-field">
+            <label for="edit-description">Description</label>
+            <textarea id="edit-description" name="description" placeholder="A longer paragraph shown on your profile page"></textarea>
+          </div>
+          <div class="form-field">
+            <label for="edit-category">Main category</label>
+            <select id="edit-category" name="category"></select>
+          </div>
+          <div class="form-field" id="category-other-field" hidden>
+            <label for="edit-category-other">Describe your category</label>
+            <input id="edit-category-other" name="categoryOther" type="text" maxlength="40" placeholder="e.g. Youth Mentorship" />
+          </div>
+          <div class="form-field">
+            <label>Also serves</label>
+            <p class="field-hint">Tick anything else you genuinely work on — you'll appear under each when people browse by need. Your main category stays the one on your badge.</p>
+            <div class="checkbox-grid" id="also-serves"></div>
+          </div>
+          <div class="form-field">
+            <label for="edit-programs">Programs</label>
+            <p class="field-hint">One per line.</p>
+            <textarea id="edit-programs" name="programs" placeholder="Program One&#10;Program Two"></textarea>
           </div>
         </div>
 
-        <div class="form-field">
-          <label for="edit-logo">Logo</label>
-          <p class="field-hint">Square image works best — about 400×400px (1:1). PNG with a transparent background is ideal. Automatically compressed to under ~300KB regardless of the original file (up to 10MB upload).</p>
-          <div class="file-row">
-            <div class="file-thumb round" id="logo-thumb">No logo</div>
-            <label class="btn btn-outline btn-sm" for="edit-logo">Choose image</label>
-            <input class="file-input" id="edit-logo" name="logo" type="file" accept="image/*" />
+        <!-- Contact -->
+        <div class="tab-panel" data-panel="contact" role="tabpanel">
+          <div class="form-field">
+            <label for="edit-website">Website</label>
+            <input id="edit-website" name="website" type="url" placeholder="https://" />
           </div>
-          <a class="form-note" id="logo-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download this logo file to attach to the email</a>
+          <div class="form-field">
+            <label for="edit-org-email">Contact email</label>
+            <input id="edit-org-email" name="orgEmail" type="email" placeholder="contact@example.org" />
+          </div>
+          <div class="form-field">
+            <label for="edit-phone">Phone</label>
+            <input id="edit-phone" name="phone" type="tel" placeholder="(209) 555-0100" />
+          </div>
+          <div class="form-field">
+            <label for="edit-location">Location</label>
+            <p class="field-hint">City &amp; ZIP only — no street address, that stays private to the vetting call.</p>
+            <input id="edit-location" name="location" type="text" placeholder="Mountain House, CA 95391" />
+          </div>
+          <div class="form-field">
+            <label for="edit-ein">EIN</label>
+            <p class="field-hint">Your IRS number, e.g. "12-3456789". Shown publicly for donor trust.</p>
+            <input id="edit-ein" name="ein" type="text" placeholder="12-3456789" />
+          </div>
+          <div class="form-field">
+            <label for="edit-donate">Donate link</label>
+            <input id="edit-donate" name="donateUrl" type="url" placeholder="https://" />
+          </div>
+          <div class="form-field">
+            <label for="edit-support">Get involved link</label>
+            <p class="field-hint">Volunteer sign-up, sponsorship page, wish list. Leave blank to keep the default text.</p>
+            <input id="edit-support" name="supportUrl" type="url" placeholder="https://" />
+          </div>
         </div>
 
-        <div class="form-field">
-          <label for="edit-banner">Banner photo</label>
-          <p class="field-hint">Wide photo works best — about 1200×400px (3:1 aspect ratio), like a good event photo. It'll be cropped to fit that shape and automatically compressed to under ~400KB regardless of the original file (up to 10MB upload).</p>
-          <div class="file-row">
-            <div class="file-thumb wide" id="banner-thumb">No banner</div>
-            <label class="btn btn-outline btn-sm" for="edit-banner">Choose image</label>
-            <input class="file-input" id="edit-banner" name="banner" type="file" accept="image/*" />
+        <!-- Look -->
+        <div class="tab-panel" data-panel="look" role="tabpanel">
+          <div class="form-field">
+            <label>Theme</label>
+            <p class="field-hint">Recolours your whole profile page — background glow, banner, badge and buttons.</p>
+            <div class="theme-grid" id="theme-grid"></div>
+            <p class="field-hint" style="margin-top: 16px;">Or set your own colours:</p>
+            <div class="color-pair">
+              <label class="color-pick">
+                <span>Primary</span>
+                <input id="edit-color" name="color" type="color" value="#22D3EE" />
+              </label>
+              <label class="color-pick">
+                <span>Secondary</span>
+                <input id="edit-color2" name="color2" type="color" value="#FBBF24" />
+              </label>
+              <input id="edit-color-hex" type="text" value="#22D3EE" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" aria-label="Primary colour hex" />
+            </div>
           </div>
-          <a class="form-note" id="banner-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download this banner file to attach to the email</a>
+          <div class="form-field">
+            <label for="edit-logo">Logo</label>
+            <p class="field-hint">Square, about 400×400px. PNG with transparency is ideal. Compressed to ~300KB automatically.</p>
+            <div class="file-row">
+              <div class="file-thumb round" id="logo-thumb">No logo</div>
+              <label class="btn btn-outline btn-sm" for="edit-logo">Choose image</label>
+              <input class="file-input" id="edit-logo" name="logo" type="file" accept="image/*" />
+            </div>
+            <a class="form-note" id="logo-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download to attach to the email</a>
+          </div>
+          <div class="form-field">
+            <label for="edit-banner">Banner photo</label>
+            <p class="field-hint">Wide, about 1200×400px (3:1) — a good event photo works. Compressed to ~400KB automatically.</p>
+            <div class="file-row">
+              <div class="file-thumb wide" id="banner-thumb">No banner</div>
+              <label class="btn btn-outline btn-sm" for="edit-banner">Choose image</label>
+              <input class="file-input" id="edit-banner" name="banner" type="file" accept="image/*" />
+            </div>
+            <a class="form-note" id="banner-download" href="#" download hidden><i data-icon="download" data-icon-size="15"></i> Download to attach to the email</a>
+          </div>
         </div>
 
-        <button class="btn btn-gold" type="submit" id="submit-btn" style="width: 100%; justify-content: center;">Save &amp; Email Us</button>
-        <button class="btn btn-outline btn-sm" type="button" id="reset-btn" style="width: 100%; margin-top: 10px; justify-content: center;">Reset local preview</button>
-        <div class="save-status" id="save-status"></div>
+        <!-- Events -->
+        <div class="tab-panel" data-panel="events" role="tabpanel">
+          <p class="field-hint">Your events appear on the shared calendar on the home page and on your own profile. Past events age out on their own — no need to delete them.</p>
+          <div id="events-editor"></div>
+          <button type="button" class="btn btn-outline btn-sm add-event-btn" id="add-event">
+            <i data-icon="plus" data-icon-size="16"></i> Add an event
+          </button>
+        </div>
+
+        <div class="edit-actions">
+          <button class="btn btn-gold" type="submit" id="submit-btn">Save &amp; Email Us</button>
+          <button class="btn btn-outline btn-sm" type="button" id="reset-btn">Reset local preview</button>
+          <div class="save-status" id="save-status"></div>
+        </div>
       </form>
     </div>
   </div>
