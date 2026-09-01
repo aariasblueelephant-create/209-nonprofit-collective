@@ -16,8 +16,8 @@
   "serviceArea": "Mountain House, CA 95391",
   "joinedDate": "2026-08-25",
   "banner": "",
-  "themeColor": "#22D3EE",
-  "themeColor2": "#FBBF24",
+  "themeColor": "#0EA5E9",
+  "themeColor2": "#06B6D4",
   "donateUrl": "",
   "programs": [
     "Inclusive Easter Egg Hunt",
@@ -29,12 +29,12 @@
   "events": [
     {
       "id": "evt-1-0",
-      "title": "SONC Softball Regionals",
+      "title": "SONC",
       "date": "2026-09-20",
       "time": "",
-      "location": "Sonora",
+      "location": "",
       "description": "",
-      "image": "https://photos.google.com/photo/AF1QipPuxMhC7LsUsEVS3KZJK9UQCvNj7rcnQxQ8-xso"
+      "image": "https://photos.app.goo.gl/941zDSN2LpqzHNeQ6"
     }
   ],
   "announcements": [
