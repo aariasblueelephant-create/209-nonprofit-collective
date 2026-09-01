@@ -26,7 +26,17 @@
     "First Responders Project",
     "Community Resource Fair"
   ],
-  "events": [],
+  "events": [
+    {
+      "id": "evt-1-0",
+      "title": "SONC Softball Regionals",
+      "date": "2026-09-20",
+      "time": "",
+      "location": "Sonora",
+      "description": "",
+      "image": "https://photos.google.com/photo/AF1QipPuxMhC7LsUsEVS3KZJK9UQCvNj7rcnQxQ8-xso"
+    }
+  ],
   "announcements": [
     {
       "id": "founding-member",
