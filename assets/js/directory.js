@@ -18,14 +18,33 @@
   function render() {
     const query = searchInput.value.trim();
     const categoryId = categorySelect.value;
-    const filtered = orgs.filter((org) => matches(org, query, categoryId));
+    const filtered = orgs
+      .filter((org) => matches(org, query, categoryId))
+      // Orgs whose *core* work is this category rank above those that merely
+      // also do it — someone filtering for "Special Needs" wants the
+      // specialists first, not an org that lists it as a side activity.
+      .sort((a, b) => {
+        if (categoryId !== "all") {
+          const rank = (o) => (o.categoryId === categoryId ? 0 : 1);
+          const diff = rank(a) - rank(b);
+          if (diff !== 0) return diff;
+        }
+        return a.name.localeCompare(b.name);
+      });
 
     grid.innerHTML = "";
     if (filtered.length === 0) {
       grid.innerHTML = '<div class="empty-state">No organizations match yet. Try a different search or category.</div>';
       return;
     }
-    filtered.forEach((org) => grid.appendChild(createCard(org, categories)));
+    filtered.forEach((org) => {
+      // When an org matched on a secondary category, say so on its card
+      // rather than showing a badge that doesn't match what was searched.
+      const secondary = categoryId !== "all" && org.categoryId !== categoryId;
+      grid.appendChild(createCard(org, categories, {
+        alsoNote: secondary ? `also ${categoryLabel(categories, categoryId)}` : null,
+      }));
+    });
     stagger(grid.children, 55);
     initReveal();
   }

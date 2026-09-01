@@ -716,6 +716,19 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
   border-radius: var(--radius-pill);
 }
 
+/* Secondary categories are deliberately quieter than the primary badge —
+   an org should still read as one clear thing at a glance. */
+.card-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge-also {
+  color: var(--text-faint);
+  background: transparent;
+  border-color: var(--border);
+  font-weight: 600;
+}
+.org-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; margin-bottom: var(--s3); }
+.org-badges .badge { margin: 0; }
+.org-badges #org-also { display: contents; }
+
 .empty-state {
   color: var(--text-faint);
   padding: var(--s8) var(--s5);
@@ -751,6 +764,27 @@ h3 { font-size: 1.1rem; font-weight: 600; margin: 0 0 var(--s3); }
 }
 .event-date-day { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
 .event-date-month { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.12em; opacity: 0.8; }
+.event-item.is-expandable { flex-wrap: wrap; }
+.event-toggle {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.event-toggle:hover { color: var(--org-accent); border-color: var(--org-accent); }
+.event-item.is-open .event-toggle { transform: rotate(180deg); color: var(--org-accent); border-color: var(--org-accent); }
+.event-full { display: none; flex-basis: 100%; margin-top: var(--s4); }
+.event-item.is-open .event-full { display: block; animation: tab-in 0.3s var(--ease); }
+.event-full img { width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.event-img-error { font-size: 0.85rem; color: var(--text-faint); margin: 0; }
+.event-img-error a { color: var(--org-accent); font-weight: 600; }
+
 .event-thumb { width: 58px; height: 58px; border-radius: 14px; overflow: hidden; flex-shrink: 0; border: 1px solid var(--border); }
 .event-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .event-content { min-width: 0; }
@@ -1162,7 +1196,9 @@ body.is-themed .nav-links a.active::after { background: linear-gradient(90deg, v
 }
 .org-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .org-avatar .initials { font-size: 2rem; }
-.org-header .badge { margin: 0 auto var(--s3); }
+/* Badges are centred by .org-badges' flex layout now, so no auto margins —
+   they'd fight the flex row when there's more than one badge. */
+.org-header .badge { margin: 0; }
 .org-header h1 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin: 0 0 6px; }
 #org-tagline { color: var(--text-dim); margin: 0; font-size: 1.04rem; }
 
@@ -1284,6 +1320,10 @@ body.is-themed .nav-links a.active::after { background: linear-gradient(90deg, v
   color: var(--text);
 }
 .form-field input, .form-field select, .form-field textarea {
+  /* Tells the browser to render native widgets (the date picker's calendar
+     icon, the colour swatch) for a dark UI — without it the icon is drawn
+     near-black on our near-black inputs and is effectively invisible. */
+  color-scheme: dark;
   width: 100%;
   padding: 12px 16px;
   border-radius: var(--radius-sm);

@@ -17,7 +17,18 @@ const HELP_EMAIL = "contact@aariasblueelephant.org";
   let needs = [];
 
   function orgsForNeed(need) {
-    return orgs.filter((o) => orgCategoryIds(o).some((id) => need.categoryIds.includes(id)));
+    return orgs
+      .filter((o) => orgCategoryIds(o).some((id) => need.categoryIds.includes(id)))
+      // Specialists first: an org whose primary category is this need is more
+      // likely to actually help than one that lists it as a side activity.
+      .sort((a, b) => {
+        const rank = (o) => (need.categoryIds.includes(o.categoryId) ? 0 : 1);
+        return rank(a) - rank(b) || a.name.localeCompare(b.name);
+      });
+  }
+
+  function isPrimaryFor(org, need) {
+    return need.categoryIds.includes(org.categoryId);
   }
 
   function showNeed(need) {
@@ -31,7 +42,9 @@ const HELP_EMAIL = "contact@aariasblueelephant.org";
     if (matches.length === 0) {
       resultsGrid.innerHTML = `<div class="empty-state">Nobody in the collective covers this yet. <a href="mailto:${HELP_EMAIL}">Email us</a> and we'll help you look further afield.</div>`;
     } else {
-      matches.forEach((org) => resultsGrid.appendChild(createCard(org, categories)));
+      matches.forEach((org) => resultsGrid.appendChild(createCard(org, categories, {
+        alsoNote: isPrimaryFor(org, need) ? null : "also works on this",
+      })));
       stagger(resultsGrid.children, 55);
       initReveal();
     }

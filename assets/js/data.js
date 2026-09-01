@@ -40,7 +40,7 @@ function applyLocalOverride(org) {
   if (override.banner) merged.banner = override.banner;
   if (override.categoryId) merged.categoryId = override.categoryId;
   if (override.categoryOther) merged.categoryOther = override.categoryOther;
-  if (override.alsoServes) merged.alsoServes = override.alsoServes;
+  if (override.alsoServes && override.alsoServes.length) merged.alsoServes = override.alsoServes;
   if (override.tagline) merged.tagline = override.tagline;
   if (override.description) merged.description = override.description;
   if (override.website) merged.website = override.website;
@@ -51,7 +51,11 @@ function applyLocalOverride(org) {
   if (override.donateUrl) merged.donateUrl = override.donateUrl;
   if (override.supportUrl) merged.supportUrl = override.supportUrl;
   if (override.programs && override.programs.length) merged.programs = override.programs;
-  if (override.events) merged.events = override.events;
+  // Length-checked, not just truthy: an empty array is truthy in JS, so a
+  // stale override saved while the org had no events would permanently mask
+  // events published later — the org would publish successfully and still
+  // see nothing on that browser.
+  if (override.events && override.events.length) merged.events = override.events;
   return merged;
 }
 

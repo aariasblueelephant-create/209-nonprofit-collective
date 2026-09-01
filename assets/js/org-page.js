@@ -35,7 +35,17 @@
 
     fillAvatar(document.getElementById("org-avatar"), org);
     document.getElementById("org-name").textContent = org.name;
-    document.getElementById("org-badge").textContent = orgCategoryLabel(categories, org.categoryId, org.categoryOther);
+    const badgeEl = document.getElementById("org-badge");
+    badgeEl.textContent = orgCategoryLabel(categories, org.categoryId, org.categoryOther);
+    // Secondary categories sit beside the primary badge, visibly subordinate
+    // to it, so the org still reads as one clear thing.
+    const alsoWrap = document.getElementById("org-also");
+    (org.alsoServes || []).forEach((id) => {
+      const chip = document.createElement("span");
+      chip.className = "badge badge-also";
+      chip.textContent = categoryLabel(categories, id);
+      alsoWrap.appendChild(chip);
+    });
     document.getElementById("org-tagline").textContent = org.tagline || "";
     document.getElementById("org-description").textContent = org.description || "";
 
@@ -127,16 +137,32 @@
         a.innerHTML = `${iconSvg("external", 16)} Get Involved`;
         supportActions.appendChild(a);
       }
+    } else if (org.email || org.phone) {
+      // No donate or get-involved link on file. Point people at the org
+      // itself — "Join the Collective" belongs to orgs applying to join,
+      // not to a supporter reading this org's page.
+      supportText.textContent = `${org.name} hasn't listed a donation link yet — reach out to them directly to find out how to help.`;
+      if (org.email) {
+        const a = document.createElement("a");
+        a.className = "btn btn-gold btn-sm";
+        a.href = `mailto:${org.email}`;
+        a.innerHTML = `${iconSvg("mail", 16)} Email ${org.name}`;
+        supportActions.appendChild(a);
+      }
+      if (org.phone) {
+        const a = document.createElement("a");
+        a.className = org.email ? "btn btn-outline btn-sm" : "btn btn-gold btn-sm";
+        a.href = `tel:${org.phone.replace(/[^\d+]/g, "")}`;
+        a.innerHTML = `${iconSvg("phone", 16)} ${org.phone}`;
+        supportActions.appendChild(a);
+      }
     } else {
-      supportText.textContent = "Interested sponsors can reach out directly, or join the collective to explore matching with a cause you believe in.";
-      const a = document.createElement("a");
-      a.className = "btn btn-gold btn-sm";
-      a.href = "apply.html";
-      a.textContent = "Join the Collective";
-      supportActions.appendChild(a);
+      supportText.textContent = `${org.name} hasn't listed a way to support them yet.`;
     }
 
-    if (org.email) {
+    // Only add the plain contact link when the buttons above aren't already
+    // the contact details — otherwise it's the same action twice.
+    if (org.email && hasOwnLinks) {
       const a = document.createElement("a");
       a.className = "support-contact";
       a.href = `mailto:${org.email}`;

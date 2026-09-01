@@ -284,7 +284,7 @@ function decodeJwtPayload(token) {
         { key: "time", label: "Time", type: "text", ph: "10:00 AM - 1:00 PM" },
         { key: "location", label: "Location", type: "text", ph: "Mountain House Community Park" },
         { key: "description", label: "Description", type: "textarea", ph: "Short description shown under the event." },
-        { key: "image", label: "Photo link", type: "url", ph: "https://… (a link, not an upload)" },
+        { key: "image", label: "Photo link", type: "url", ph: "https://…/flyer.jpg", hint: "Must be a direct link ending in .jpg/.png — a Google Photos or Dropbox share page won't display." },
         { key: "url", label: "Event / RSVP link", type: "url", ph: "https://…" },
       ];
       fields.forEach((f) => {
@@ -292,6 +292,13 @@ function decodeJwtPayload(token) {
         wrap.className = "form-field";
         const label = document.createElement("label");
         label.textContent = f.label;
+        wrap.appendChild(label);
+        if (f.hint) {
+          const hint = document.createElement("p");
+          hint.className = "field-hint";
+          hint.textContent = f.hint;
+          wrap.appendChild(hint);
+        }
         const input = document.createElement(f.type === "textarea" ? "textarea" : "input");
         if (f.type !== "textarea") input.type = f.type;
         input.value = ev[f.key] || "";
@@ -303,7 +310,6 @@ function decodeJwtPayload(token) {
         if (f.key === "title" || f.key === "date") {
           input.addEventListener("change", renderEvents);
         }
-        wrap.appendChild(label);
         wrap.appendChild(input);
         body.appendChild(wrap);
       });

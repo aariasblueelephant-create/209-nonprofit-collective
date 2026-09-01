@@ -47,7 +47,10 @@ function createBubble(org) {
   return a;
 }
 
-function createCard(org, categories) {
+// opts.alsoNote — when the org surfaced because of a SECONDARY category,
+// name it, so the card explains why it's in these results rather than
+// showing only a badge that doesn't match what was searched.
+function createCard(org, categories, opts) {
   const card = document.createElement("article");
   card.className = "card";
 
@@ -65,9 +68,20 @@ function createCard(org, categories) {
   top.appendChild(avatar);
   top.appendChild(title);
 
+  const badgeRow = document.createElement("div");
+  badgeRow.className = "card-badges";
+
   const badge = document.createElement("div");
   badge.className = "badge";
   badge.textContent = orgCategoryLabel(categories, org.categoryId, org.categoryOther);
+  badgeRow.appendChild(badge);
+
+  if (opts && opts.alsoNote) {
+    const also = document.createElement("div");
+    also.className = "badge badge-also";
+    also.textContent = opts.alsoNote;
+    badgeRow.appendChild(also);
+  }
 
   const tagline = document.createElement("div");
   tagline.className = "card-tagline";
@@ -79,7 +93,7 @@ function createCard(org, categories) {
   link.innerHTML = `View Profile ${iconSvg("arrowRight", 16)}`;
 
   card.appendChild(top);
-  card.appendChild(badge);
+  card.appendChild(badgeRow);
   card.appendChild(tagline);
   card.appendChild(link);
   return card;
@@ -169,6 +183,48 @@ function createEventItem(org, event, opts) {
   }
 
   item.appendChild(content);
+
+  // A large flyer, revealed on click. Kept out of the collapsed row so a
+  // list of events stays scannable, but reachable — previously an event's
+  // photo had nowhere to appear at full size.
+  if (event.image) {
+    item.classList.add("is-expandable");
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "event-toggle";
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", `Show flyer for ${event.title}`);
+    toggle.innerHTML = iconSvg("image", 17);
+
+    const full = document.createElement("div");
+    full.className = "event-full";
+    const fullImg = document.createElement("img");
+    fullImg.src = event.image;
+    fullImg.alt = `${event.title} flyer`;
+    fullImg.loading = "lazy";
+    // Some "image" URLs are share pages (Google Photos, Dropbox) rather than
+    // a direct image file and will never load. Say so instead of leaving a
+    // silent blank panel.
+    fullImg.onerror = () => {
+      full.innerHTML = "";
+      const note = document.createElement("p");
+      note.className = "event-img-error";
+      note.innerHTML = `That photo link doesn't point directly at an image, so it can't be shown here. `
+        + `<a href="${event.image}" target="_blank" rel="noopener">Open it in a new tab</a> instead.`;
+      full.appendChild(note);
+    };
+    full.appendChild(fullImg);
+
+    toggle.addEventListener("click", () => {
+      const open = item.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
+    });
+
+    item.appendChild(toggle);
+    item.appendChild(full);
+  }
+
   return item;
 }
 
