@@ -27,6 +27,10 @@ const ICON_PATHS = {
   home: '<path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 21v-8h6v8"/>',
   lifebuoy: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="m4.9 4.9 4.3 4.3M14.8 14.8l4.3 4.3M14.8 9.2l4.3-4.3M4.9 19.1l4.3-4.3"/>',
   arrowLeft: '<path d="M19 12H5M12 19l-7-7 7-7"/>',
+  flame: '<path d="M12 2s4 4.5 4 8a4 4 0 0 1-8 0c0-1 .3-2 .8-2.8C8 8.5 7 10.5 7 13a5 5 0 0 0 10 0c0-4.5-5-11-5-11Z"/>',
+  droplet: '<path d="M12 2.7 6.7 8a7.5 7.5 0 1 0 10.6 0Z"/>',
+  leaf: '<path d="M11 20A7 7 0 0 1 4 13c0-6 7-9 16-9 0 9-3 16-9 16Z"/><path d="M4 20c2.5-4 6-7 10-9"/>',
+  cloud: '<path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.5 1.5A3.75 3.75 0 0 0 7 19Z"/>',
 };
 
 function iconSvg(name, size) {

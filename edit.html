@@ -68,14 +68,25 @@
       <p class="lead">Update your theme, logo, banner, and profile text — category, tagline, description, contact info, EIN, location, donate link, and programs. Anyone can preview changes here, so please only edit your own organization.</p>
       <p class="form-note"><strong>Verified editors publish instantly.</strong> Sign in with the Google account on file for your organization and, if it's recognized, your changes go live automatically — no email needed. Everyone else's changes still preview locally and go out as an email for us to apply.</p>
 
-      <div class="side-card" id="signin-card" style="margin: 24px 0;">
-        <h3 style="margin-top: 0;"><i data-icon="shield" data-icon-size="17"></i> Sign in to publish instantly</h3>
+      <div class="signin-strip" id="signin-strip">
+        <div class="signin-strip-status">
+          <i data-icon="shield" data-icon-size="16"></i>
+          <span id="signin-status">Not signed in — changes will preview locally and go out by email.</span>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" id="signin-open">Sign in</button>
+      </div>
+
+      <dialog id="signin-dialog">
+        <button type="button" class="dialog-close" id="signin-dialog-close" aria-label="Close">
+          <i data-icon="x" data-icon-size="18"></i>
+        </button>
+        <h3><i data-icon="shield" data-icon-size="18"></i> Sign in to publish instantly</h3>
+        <p class="field-hint">Sign in with the Google account on file for your organization and, if it's recognized, your changes go live automatically — no email needed.</p>
         <div id="g_id_signin"></div>
-        <p class="field-hint" id="signin-status">Not signed in — changes will preview locally and go out by email.</p>
         <p class="field-hint" id="signin-unconfigured" hidden>Google sign-in isn't configured on this deployment yet — you can still use the email flow below.</p>
         <p class="field-hint">If your Google account is at your organization's own domain — anything <code>@yourorg.org</code> when your listed website is <code>yourorg.org</code> — you're recognised automatically. No allowlist entry needed.</p>
         <p class="field-hint">Using a Gmail or other personal address? Email <a id="signin-email" href="#"></a> from your organization's address, or include your nonprofit's EIN so we can confirm it's really you, and we'll add that account by hand. Until then you can still send your logo and banner by email using the form below — no sign-in required.</p>
-      </div>
+      </dialog>
 
       <div class="edit-preview" id="edit-preview">
         <header class="org-header">

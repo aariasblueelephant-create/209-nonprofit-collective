@@ -76,7 +76,7 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
       "time": "10:00 AM - 1:00 PM",      // optional, free text
       "location": "Mountain House Community Park", // optional
       "description": "Short description shown under the event.",
-      "image": "",                        // optional — a LINK to a flyer/event photo already hosted elsewhere (Canva, Facebook, the org's site, etc.), not an uploaded file. Events accumulate forever (unlike logo/banner, which get replaced), so never commit event photos into this repo — that would make it grow without bound. Shown as a small thumbnail if set, otherwise just the date badge shows.
+      "image": "",                        // optional — either "assets/events/<slug>-<id>.jpg" (uploaded via edit.html, written by the Worker) or a direct link to an already-hosted image. Shown as a small thumbnail if set, otherwise just the date badge shows.
       "url": ""                           // optional — a link to the event's own page (RSVP/registration/Facebook event/etc.); shown as a small "Event details / RSVP" link if set
     }
   ],
@@ -227,8 +227,12 @@ The **Events** tab on `edit.html` adds, edits and deletes an org's events —
 no JSON editing needed. Rows are collapsed by default and sorted by date, and
 deleting asks for confirmation since it can't be undone from the page.
 
-Event photos are a **link** to an already-hosted image, never an upload — see
-the note on `image` in the schema above for why.
+Event photos can be uploaded directly (compressed client-side, then written
+by the Worker to `assets/events/<slug>-<eventId>.<ext>` the same way
+logo/banner are — never inlined as base64 into the org's JSON) or set as a
+link to an already-hosted image. Uploads only apply for verified editors
+publishing through the Worker; the email fallback still needs a link, since
+there's no server to receive a file from that path.
 
 ## The shared event calendar
 

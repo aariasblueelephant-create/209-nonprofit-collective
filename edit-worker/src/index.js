@@ -261,6 +261,28 @@ export default {
         org.banner = bannerPath;
       }
 
+      // Event photos come in as inline data: URLs (the client shows an
+      // instant preview before publishing). Write each one out as a real
+      // file, same as logo/banner — inlining base64 into the JSON would
+      // bloat every future diff of this file forever, not just the commit
+      // that added the photo.
+      if (Array.isArray(org.events)) {
+        for (const event of org.events) {
+          if (typeof event.image !== "string" || !event.image.startsWith("data:")) continue;
+          const base64 = dataUrlToBase64(event.image);
+          if (base64Bytes(base64) > MAX_IMAGE_BYTES) {
+            return json(env, { ok: false, error: `The photo for "${event.title || "an event"}" is too large (over ${Math.round(MAX_IMAGE_BYTES / 1024)}KB after encoding).` }, 413);
+          }
+          const ext = event.image.startsWith("data:image/png") ? "png" : "jpg";
+          const safeId = String(event.id || Date.now()).replace(/[^a-z0-9-]/gi, "");
+          const eventPath = `assets/events/${slug}-${safeId}.${ext}`;
+          let existingSha;
+          try { existingSha = (await githubGetFile(env, eventPath)).sha; } catch { /* file may not exist yet */ }
+          await githubPutFile(env, eventPath, base64, `Add photo for "${event.title || "event"}" (${org.name}) via self-service edit (${email})`, existingSha);
+          event.image = eventPath;
+        }
+      }
+
       const newOrgContent = utf8ToBase64(JSON.stringify(org, null, 2) + "\n");
       await githubPutFile(env, orgPath, newOrgContent, `Update ${org.name} via self-service edit (${email})`, orgSha);
 

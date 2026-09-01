@@ -1388,6 +1388,53 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; color: var
 }
 .color-row input[type="text"] { flex: 1; font-family: ui-monospace, Menlo, monospace; }
 
+/* Sign-in strip + modal — a compact status bar always visible near the top,
+   with the actual sign-in flow in a real <dialog> instead of one card lost
+   in a long scroll of other fields. */
+.signin-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: 12px 18px;
+  margin: var(--s5) 0;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.signin-strip.is-authorized { border-color: color-mix(in srgb, var(--lime) 45%, transparent); background: color-mix(in srgb, var(--lime) 8%, transparent); }
+.signin-strip-status { display: flex; align-items: center; gap: var(--s2); font-size: 0.86rem; color: var(--text-dim); }
+.signin-strip.is-authorized .signin-strip-status { color: var(--text); }
+.signin-strip.is-authorized .signin-strip-status .icon { color: var(--lime); }
+
+dialog#signin-dialog {
+  width: min(480px, calc(100vw - 48px));
+  padding: var(--s6);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: var(--shadow-3);
+}
+dialog#signin-dialog::backdrop { background: rgba(4, 6, 12, 0.72); backdrop-filter: blur(4px); }
+dialog#signin-dialog h3 { display: flex; align-items: center; gap: var(--s2); margin-top: 0; }
+dialog#signin-dialog #g_id_signin { margin: var(--s4) 0; display: flex; justify-content: center; }
+.dialog-close {
+  position: absolute;
+  top: var(--s4); right: var(--s4);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.dialog-close:hover { color: var(--text); border-color: var(--border-2); }
+
 /* Edit form: tabs keep a long form from becoming an endless scroll */
 .edit-card { padding: var(--s5); position: sticky; top: 90px; }
 .tabs {
@@ -1472,6 +1519,21 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; color: var
 .event-edit.is-open { border-color: color-mix(in srgb, var(--org-accent) 45%, transparent); }
 .add-event-btn { width: 100%; justify-content: center; margin-top: var(--s3); }
 
+.event-photo-preview { margin-top: var(--s3); }
+.event-photo-preview img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.event-photo-ok, .event-photo-error {
+  margin: var(--s2) 0 0;
+  font-size: 0.82rem;
+}
+.event-photo-ok { color: var(--lime); }
+.event-photo-error { color: var(--rose); }
+
 .color-pair { display: flex; align-items: flex-end; gap: var(--s3); }
 .color-pick { display: grid; gap: 4px; }
 .color-pick span { font-size: 0.74rem; color: var(--text-faint); font-weight: 600; }
@@ -1531,9 +1593,10 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; color: var
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 0.95rem;
+  color: #04121A;
   box-shadow: var(--lift);
 }
+.theme-preset-swatch .icon { stroke-width: 2; }
 
 .file-input { display: none; }
 .file-row { display: flex; align-items: center; gap: var(--s3); margin-top: var(--s2); flex-wrap: wrap; }

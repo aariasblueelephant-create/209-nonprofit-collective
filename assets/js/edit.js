@@ -1,12 +1,14 @@
 const EDIT_EMAIL = "contact@aariasblueelephant.org";
 const DEFAULT_COLOR = "#22D3EE";
 const DEFAULT_COLOR2 = "#FBBF24";
+// Real SVG icons, not emoji — emoji render differently on every platform
+// and read as clip art next to the rest of the UI.
 const THEMES = [
-  { id: "default", label: "Default", icon: "✨", accent: "#22D3EE", accent2: "#FBBF24" },
-  { id: "fire", label: "Fire", icon: "🔥", accent: "#F97316", accent2: "#DC2626" },
-  { id: "water", label: "Water", icon: "🌊", accent: "#0EA5E9", accent2: "#06B6D4" },
-  { id: "earth", label: "Earth", icon: "🌍", accent: "#84CC16", accent2: "#A16207" },
-  { id: "sky", label: "Sky", icon: "☁️", accent: "#38BDF8", accent2: "#C4B5FD" },
+  { id: "default", label: "Default", icon: "sparkle", accent: "#22D3EE", accent2: "#FBBF24" },
+  { id: "fire", label: "Fire", icon: "flame", accent: "#F97316", accent2: "#DC2626" },
+  { id: "water", label: "Water", icon: "droplet", accent: "#0EA5E9", accent2: "#06B6D4" },
+  { id: "earth", label: "Earth", icon: "leaf", accent: "#84CC16", accent2: "#A16207" },
+  { id: "sky", label: "Sky", icon: "cloud", accent: "#38BDF8", accent2: "#C4B5FD" },
 ];
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 const LOGO_TARGET_BYTES = 300 * 1024;
@@ -75,6 +77,10 @@ function decodeJwtPayload(token) {
   const previewTagline = document.getElementById("preview-tagline");
 
   const signinStatus = document.getElementById("signin-status");
+  const signinStrip = document.getElementById("signin-strip");
+  const signinDialog = document.getElementById("signin-dialog");
+  const signinOpenBtn = document.getElementById("signin-open");
+  const signinCloseBtn = document.getElementById("signin-dialog-close");
   const signinUnconfigured = document.getElementById("signin-unconfigured");
   const submitBtn = document.getElementById("submit-btn");
 
@@ -103,10 +109,13 @@ function decodeJwtPayload(token) {
 
   function updateSigninUI() {
     const slug = current ? current.slug : null;
+    const authorized = Boolean(slug && isAuthorizedFor(slug));
+    signinStrip.classList.toggle("is-authorized", authorized);
+    signinOpenBtn.hidden = authorized;
     if (googleEmail) {
       const grant = slug ? grantFor(slug) : null;
       if (grant === "domain") {
-        signinStatus.textContent = `Signed in as ${googleEmail} — recognised as ${current.name} (your email domain matches their website). You can publish live.`;
+        signinStatus.textContent = `Signed in as ${googleEmail} — recognised as ${current.name}. You can publish live.`;
       } else if (grant === "allowlist") {
         signinStatus.textContent = `Signed in as ${googleEmail} — authorized to publish live for ${current.name}.`;
       } else {
@@ -115,7 +124,7 @@ function decodeJwtPayload(token) {
     } else {
       signinStatus.textContent = "Not signed in — changes will preview locally and go out by email.";
     }
-    submitBtn.textContent = slug && isAuthorizedFor(slug) && WORKER_URL ? "Publish Live" : "Save & Email Us";
+    submitBtn.textContent = authorized && WORKER_URL ? "Publish Live" : "Save & Email Us";
   }
   // currentLogo/currentBanner: what's actually on file for this org right now
   // (a real asset path, or a previously-saved local-preview data: URL).
@@ -284,7 +293,6 @@ function decodeJwtPayload(token) {
         { key: "time", label: "Time", type: "text", ph: "10:00 AM - 1:00 PM" },
         { key: "location", label: "Location", type: "text", ph: "Mountain House Community Park" },
         { key: "description", label: "Description", type: "textarea", ph: "Short description shown under the event." },
-        { key: "image", label: "Photo link", type: "url", ph: "https://…/flyer.jpg", hint: "Must be a direct link ending in .jpg/.png — a Google Photos or Dropbox share page won't display." },
         { key: "url", label: "Event / RSVP link", type: "url", ph: "https://…" },
       ];
       fields.forEach((f) => {
@@ -313,6 +321,8 @@ function decodeJwtPayload(token) {
         wrap.appendChild(input);
         body.appendChild(wrap);
       });
+
+      body.appendChild(buildEventPhotoField(i, ev));
       row.appendChild(body);
 
       head.addEventListener("click", (e) => {
@@ -322,6 +332,158 @@ function decodeJwtPayload(token) {
 
       eventsEditor.appendChild(row);
     });
+  }
+
+  // Event photo: either upload a file (compressed the same way as
+  // logo/banner, so it can be committed straight into the repo — events
+  // don't accumulate the way logo/banner replace-in-place, but a single
+  // flyer is small) or paste a direct image link. Either way, shows an
+  // actual <img> immediately so a broken/share-page link is obvious before
+  // publishing rather than discovered afterward on the live page.
+  function buildEventPhotoField(i, ev) {
+    const wrap = document.createElement("div");
+    wrap.className = "form-field event-photo-field";
+
+    const label = document.createElement("label");
+    label.textContent = "Photo";
+    wrap.appendChild(label);
+
+    const hint = document.createElement("p");
+    hint.className = "field-hint";
+    hint.textContent = "Upload an image, or paste a direct link ending in .jpg/.png. A Google Photos or Dropbox share page won't display — paste it below to check.";
+    wrap.appendChild(hint);
+
+    const row = document.createElement("div");
+    row.className = "file-row";
+
+    const thumb = document.createElement("div");
+    thumb.className = "file-thumb wide";
+    thumb.textContent = "No photo";
+
+    const uploadLabel = document.createElement("label");
+    uploadLabel.className = "btn btn-outline btn-sm";
+    uploadLabel.textContent = "Upload image";
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.className = "file-input";
+    uploadLabel.appendChild(fileInput);
+
+    row.appendChild(thumb);
+    row.appendChild(uploadLabel);
+    wrap.appendChild(row);
+
+    const urlInput = document.createElement("input");
+    urlInput.type = "url";
+    urlInput.placeholder = "https://…/flyer.jpg";
+    urlInput.value = ev.image && !ev.image.startsWith("data:") ? ev.image : "";
+    urlInput.style.marginTop = "8px";
+    wrap.appendChild(urlInput);
+
+    const preview = document.createElement("div");
+    preview.className = "event-photo-preview";
+    wrap.appendChild(preview);
+
+    // Only relevant on the email fallback (mailto can't attach files) — an
+    // uploaded photo that publishes straight to the Worker doesn't need this,
+    // but someone whose sign-in isn't recognised still needs a way to hand
+    // the file to whoever applies their emailed request.
+    const downloadLink = document.createElement("a");
+    downloadLink.className = "form-note";
+    downloadLink.download = "event-photo.jpg";
+    downloadLink.hidden = true;
+    downloadLink.innerHTML = `${iconSvg("download", 15)} Download this photo to attach to the email`;
+    wrap.appendChild(downloadLink);
+
+    function setStatusNote(text, ok) {
+      let note = preview.querySelector(".event-photo-ok, .event-photo-error");
+      if (!note) {
+        note = document.createElement("p");
+        preview.appendChild(note);
+      }
+      note.className = ok ? "event-photo-ok" : "event-photo-error";
+      note.textContent = text;
+    }
+
+    function showPreview(src) {
+      preview.innerHTML = "";
+      if (!src) return;
+      const img = document.createElement("img");
+      img.alt = "Event photo preview";
+      img.onload = () => setStatusNote(`Looks good — ${img.naturalWidth}×${img.naturalHeight}px.`, true);
+      img.onerror = () => {
+        img.remove();
+        setStatusNote(
+          "This doesn't load as an image — it's likely a share page rather than a direct image link. Try \"Copy image address\" from the photo instead, or upload the file directly.",
+          false
+        );
+      };
+      preview.appendChild(img);
+      img.src = src;
+    }
+
+    function setEventImage(value) {
+      state.events[i].image = value || undefined;
+      thumb.innerHTML = "";
+      if (value) {
+        const t = document.createElement("img");
+        t.src = value;
+        t.onerror = () => { thumb.innerHTML = ""; thumb.textContent = "No photo"; };
+        thumb.appendChild(t);
+      } else {
+        thumb.textContent = "No photo";
+      }
+      if (value && value.startsWith("data:")) {
+        downloadLink.href = value;
+        downloadLink.download = `${(ev.title || "event").toLowerCase().replace(/[^a-z0-9]+/g, "-")}-photo.jpg`;
+        downloadLink.hidden = false;
+      } else {
+        downloadLink.hidden = true;
+      }
+    }
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      if (file.size > MAX_UPLOAD_BYTES) {
+        setStatusNote("That file is over 10MB — please choose a smaller image.", false);
+        fileInput.value = "";
+        return;
+      }
+      try {
+        const { dataUrl, bytes } = await compressImage(file, {
+          maxDim: 1000, minDim: 500, mime: "image/jpeg", targetBytes: BANNER_TARGET_BYTES, canReduceQuality: true,
+        });
+        urlInput.value = "";
+        setEventImage(dataUrl);
+        preview.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = dataUrl;
+        img.alt = "Event photo preview";
+        preview.appendChild(img);
+        setStatusNote(`Uploaded (${Math.round(bytes / 1024)}KB) — will attach when you save.`, true);
+      } catch (err) {
+        console.error(err);
+        setStatusNote("Could not read that file — try a different image.", false);
+      }
+    });
+
+    let debounceTimer;
+    urlInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      const value = urlInput.value.trim();
+      setEventImage(value);
+      if (!value) { preview.innerHTML = ""; return; }
+      debounceTimer = setTimeout(() => showPreview(value), 350);
+    });
+
+    // Existing photo on load, so re-opening an event shows what's already set.
+    if (ev.image) {
+      setEventImage(ev.image);
+      showPreview(ev.image);
+    }
+
+    return wrap;
   }
 
   if (addEventBtn) {
@@ -468,6 +630,58 @@ function decodeJwtPayload(token) {
     );
   }
 
+  // Cache the ID token in sessionStorage (per-tab, cleared when the tab
+  // closes — deliberately not localStorage, since this is a bearer
+  // credential) so navigating between org.html's Edit link and edit.html, or
+  // reloading, doesn't force a re-click every time within the same session.
+  const SESSION_KEY = "209collective:googleSession";
+
+  function saveSession(idToken, email) {
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ idToken, email }));
+    } catch { /* storage may be unavailable (private browsing, quota) — sign-in still works, just not cached */ }
+  }
+
+  function loadSession() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      const { idToken, email } = JSON.parse(raw);
+      const payload = decodeJwtPayload(idToken);
+      // Google ID tokens are short-lived (~1hr) — an expired cached token
+      // would silently fail every publish attempt, so drop it up front
+      // rather than surface a confusing error later.
+      if (!payload || !payload.exp || payload.exp * 1000 < Date.now()) {
+        sessionStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      return { idToken, email };
+    } catch {
+      return null;
+    }
+  }
+
+  function onSignedIn(idToken, email) {
+    googleIdToken = idToken;
+    googleEmail = email;
+    saveSession(idToken, email);
+    updateSigninUI();
+    if (signinDialog.open) signinDialog.close();
+  }
+
+  signinOpenBtn.addEventListener("click", () => signinDialog.showModal());
+  signinCloseBtn.addEventListener("click", () => signinDialog.close());
+  // Clicking the dim backdrop closes it too — the default <dialog> behaviour
+  // only closes on the close button or an explicit .close() call.
+  signinDialog.addEventListener("click", (e) => {
+    if (e.target === signinDialog) signinDialog.close();
+  });
+  // Closing (any way — X, backdrop, Esc) counts as "seen it" for this tab,
+  // so arriving at the page doesn't pop it open again on every navigation.
+  signinDialog.addEventListener("close", () => {
+    try { sessionStorage.setItem("209collective:signinDialogSeen", "1"); } catch { /* ignore */ }
+  });
+
   function initGoogleSignIn() {
     if (!GOOGLE_CLIENT_ID) {
       signinUnconfigured.hidden = false;
@@ -477,14 +691,32 @@ function decodeJwtPayload(token) {
       setTimeout(initGoogleSignIn, 150);
       return;
     }
+
+    const cached = loadSession();
+    if (cached) onSignedIn(cached.idToken, cached.email);
+
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: (response) => {
-        googleIdToken = response.credential;
-        googleEmail = (decodeJwtPayload(response.credential) || {}).email || null;
-        updateSigninUI();
+        const email = (decodeJwtPayload(response.credential) || {}).email || null;
+        onSignedIn(response.credential, email);
       },
+      // Lets Google silently re-confirm an existing session (One Tap) rather
+      // than requiring a fresh click every visit, on top of our own cache.
+      auto_select: true,
     });
+    if (!cached) {
+      // Only prompt automatically when there's nothing cached — otherwise a
+      // signed-in user would get an unsolicited popup on every page load.
+      window.google.accounts.id.prompt();
+      // "Click Edit" should land somewhere that makes signing in the
+      // obvious next step rather than one card in a long scroll — but only
+      // the first time in this tab, so closing it once doesn't mean it pops
+      // back open on every subsequent page.
+      let dialogSeen = false;
+      try { dialogSeen = sessionStorage.getItem("209collective:signinDialogSeen") === "1"; } catch { /* ignore */ }
+      if (!dialogSeen) signinDialog.showModal();
+    }
     window.google.accounts.id.renderButton(document.getElementById("g_id_signin"), {
       theme: "filled_black",
       size: "medium",
@@ -499,7 +731,7 @@ function decodeJwtPayload(token) {
     btn.className = "theme-preset";
     btn.dataset.themeId = theme.id;
     btn.title = theme.label;
-    btn.innerHTML = `<span class="theme-preset-swatch" style="background: linear-gradient(135deg, ${theme.accent}, ${theme.accent2})">${theme.icon}</span><span>${theme.label}</span>`;
+    btn.innerHTML = `<span class="theme-preset-swatch" style="background: linear-gradient(135deg, ${theme.accent}, ${theme.accent2})">${iconSvg(theme.icon, 18)}</span><span>${theme.label}</span>`;
     btn.addEventListener("click", () => setTheme(theme.accent, theme.accent2));
     themeGrid.appendChild(btn);
   });
