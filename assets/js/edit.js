@@ -44,6 +44,8 @@ function decodeJwtPayload(token) {
   const categoryOtherField = document.getElementById("category-other-field");
   const categoryOtherInput = document.getElementById("edit-category-other");
   const alsoServesWrap = document.getElementById("also-serves");
+  const galleryInput = document.getElementById("edit-gallery");
+  const galleryPreview = document.getElementById("gallery-edit-preview");
   const taglineInput = document.getElementById("edit-tagline");
   const descriptionInput = document.getElementById("edit-description");
   const websiteInput = document.getElementById("edit-website");
@@ -152,6 +154,7 @@ function decodeJwtPayload(token) {
     supportUrl: "",
     programs: [],
     events: [],
+    gallery: [],
   };
 
   function displayLogo() { return state.pendingLogo || state.currentLogo; }
@@ -508,6 +511,70 @@ function decodeJwtPayload(token) {
     });
   }
 
+  // --- Photo gallery (direct Google Photos CDN links) ------------------
+  // A "direct" link — https://lh3-6.googleusercontent.com/... — loads as a
+  // plain image, unlike an album's shareable link (photos.app.goo.gl or
+  // photos.google.com), which is an HTML page and can never be embedded.
+  const DIRECT_GOOGLE_PHOTOS_RE = /^https:\/\/lh[3-6]\.googleusercontent\.com\//i;
+  const SHARE_LINK_RE = /photos\.app\.goo\.gl|photos\.google\.com/i;
+
+  function renderGalleryPreview() {
+    if (!galleryPreview) return;
+    galleryPreview.innerHTML = "";
+    if (state.gallery.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "field-hint";
+      empty.textContent = "No photos yet — paste direct image links above.";
+      galleryPreview.appendChild(empty);
+      return;
+    }
+
+    state.gallery.forEach((url, i) => {
+      const tile = document.createElement("div");
+      tile.className = "gallery-edit-tile";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "";
+      img.onerror = () => tile.classList.add("is-broken");
+      tile.appendChild(img);
+
+      if (!DIRECT_GOOGLE_PHOTOS_RE.test(url)) {
+        const warn = document.createElement("div");
+        warn.className = "gallery-edit-warn";
+        warn.textContent = SHARE_LINK_RE.test(url)
+          ? "This is the album's share link, not a direct photo link — see the instructions above."
+          : "This doesn't look like a direct Google Photos link — it may not display.";
+        tile.appendChild(warn);
+      }
+
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "gallery-edit-del";
+      del.setAttribute("aria-label", "Remove this photo");
+      del.innerHTML = iconSvg("x", 14);
+      del.addEventListener("click", () => {
+        state.gallery.splice(i, 1);
+        galleryInput.value = state.gallery.join("\n");
+        renderGalleryPreview();
+      });
+      tile.appendChild(del);
+
+      galleryPreview.appendChild(tile);
+    });
+  }
+
+  if (galleryInput) {
+    let galleryDebounce;
+    galleryInput.addEventListener("input", () => {
+      clearTimeout(galleryDebounce);
+      galleryDebounce = setTimeout(() => {
+        state.gallery = galleryInput.value.split("\n").map((s) => s.trim()).filter(Boolean);
+        renderGalleryPreview();
+      }, 400);
+    });
+  }
+
   // Click-to-change overlay, re-attached after every render since both
   // containers get their contents replaced when the preview redraws.
   function addHint(container, label) {
@@ -601,6 +668,7 @@ function decodeJwtPayload(token) {
     state.supportUrl = org.supportUrl || "";
     state.programs = org.programs || [];
     state.events = JSON.parse(JSON.stringify(org.events || []));
+    state.gallery = (org.gallery || []).slice();
 
     categorySelect.value = state.categoryId;
     categoryOtherInput.value = state.categoryOther;
@@ -617,6 +685,8 @@ function decodeJwtPayload(token) {
     supportInput.value = state.supportUrl;
     programsInput.value = state.programs.join("\n");
     renderEvents();
+    galleryInput.value = state.gallery.join("\n");
+    renderGalleryPreview();
 
     applyThemeVars();
     renderPreview();
@@ -929,6 +999,7 @@ function decodeJwtPayload(token) {
       supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
       events: state.events,
+      gallery: state.gallery,
     };
   }
 
@@ -985,6 +1056,7 @@ function decodeJwtPayload(token) {
       supportUrl: state.supportUrl || undefined,
       programs: state.programs.length ? state.programs : undefined,
       events: state.events,
+      gallery: state.gallery,
     });
 
     if (await tryPublishLive()) return;
@@ -996,6 +1068,7 @@ function decodeJwtPayload(token) {
       `Category: ${orgCategoryLabel(categories, state.categoryId, state.categoryOther)}`,
       `Also serves: ${state.alsoServes.map((id) => categoryLabel(categories, id)).join(", ") || "(none)"}`,
       `Events: ${state.events.length ? state.events.map((e) => `${e.date} ${e.title}`).join("; ") : "(none)"}`,
+      `Gallery photos (${state.gallery.length}): ${state.gallery.join(", ") || "(none)"}`,
       `Tagline: ${state.tagline}`,
       `Description: ${state.description}`,
       `Website: ${state.website}`,

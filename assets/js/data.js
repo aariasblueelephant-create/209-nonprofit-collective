@@ -56,6 +56,7 @@ function applyLocalOverride(org) {
   // events published later — the org would publish successfully and still
   // see nothing on that browser.
   if (override.events && override.events.length) merged.events = override.events;
+  if (override.gallery && override.gallery.length) merged.gallery = override.gallery;
   return merged;
 }
 

@@ -1,3 +1,56 @@
+// Renders a grid of gallery photos and wires the lightbox that opens on
+// click. Broken tiles (a link that stops working, or was never a real
+// direct image) just remove themselves rather than showing a broken-image
+// icon. Hides the whole section when there are no photos.
+function initGallery(org) {
+  const section = document.getElementById("org-gallery-section");
+  const grid = document.getElementById("org-gallery");
+  if (!section || !grid) return;
+
+  const urls = (org.gallery || []).filter(Boolean);
+  if (urls.length === 0) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  grid.innerHTML = "";
+
+  const lightbox = document.getElementById("gallery-lightbox");
+  const lightboxImg = document.getElementById("gallery-lightbox-img");
+  let liveUrls = urls.slice();
+  let activeIndex = 0;
+
+  function openAt(i) {
+    if (liveUrls.length === 0) return;
+    activeIndex = (i + liveUrls.length) % liveUrls.length;
+    lightboxImg.src = liveUrls[activeIndex];
+    lightboxImg.alt = `${org.name} photo ${activeIndex + 1} of ${liveUrls.length}`;
+    if (!lightbox.open) lightbox.showModal();
+  }
+
+  urls.forEach((url) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "gallery-thumb";
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = `${org.name} photo`;
+    img.loading = "lazy";
+    img.onerror = () => {
+      btn.remove();
+      liveUrls = liveUrls.filter((u) => u !== url);
+    };
+    btn.appendChild(img);
+    btn.addEventListener("click", () => openAt(liveUrls.indexOf(url)));
+    grid.appendChild(btn);
+  });
+
+  document.getElementById("gallery-prev").onclick = () => openAt(activeIndex - 1);
+  document.getElementById("gallery-next").onclick = () => openAt(activeIndex + 1);
+  document.getElementById("gallery-lightbox-close").onclick = () => lightbox.close();
+  lightbox.onclick = (e) => { if (e.target === lightbox) lightbox.close(); };
+}
+
 (async function initOrgPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("slug");
@@ -47,7 +100,7 @@
       alsoWrap.appendChild(chip);
     });
     document.getElementById("org-tagline").textContent = org.tagline || "";
-    document.getElementById("org-description").textContent = org.description || "";
+    renderTextWithPhotoLinks(document.getElementById("org-description"), org.description || "");
 
     const bannerEl = document.getElementById("org-banner");
     if (org.banner) {
@@ -199,6 +252,8 @@
     } else {
       announcements.forEach((a) => announceList.appendChild(createAnnouncementItem(org, a)));
     }
+
+    initGallery(org);
 
     orgContent.hidden = false;
     stagger(eventListEl.children);

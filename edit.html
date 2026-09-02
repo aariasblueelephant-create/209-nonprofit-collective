@@ -124,6 +124,9 @@
           <button type="button" class="tab" role="tab" aria-selected="false" data-tab="events">
             <i data-icon="calendar" data-icon-size="15"></i> Events
           </button>
+          <button type="button" class="tab" role="tab" aria-selected="false" data-tab="gallery">
+            <i data-icon="image" data-icon-size="15"></i> Gallery
+          </button>
         </div>
 
         <!-- Basics -->
@@ -239,6 +242,24 @@
           <button type="button" class="btn btn-outline btn-sm add-event-btn" id="add-event">
             <i data-icon="plus" data-icon-size="16"></i> Add an event
           </button>
+        </div>
+
+        <!-- Gallery -->
+        <div class="tab-panel" data-panel="gallery" role="tabpanel">
+          <div class="form-field">
+            <label>Photo Gallery</label>
+            <p class="field-hint">Shows a grid of photos on your profile page. Already have photos in a Google Photos shared album? You can pull them in for free — no account connection needed — by grabbing each photo's direct link:</p>
+            <ol class="gallery-instructions">
+              <li>Open the Google Photos shareable album link in a browser.</li>
+              <li>Click a photo to open it full-screen.</li>
+              <li>Right-click the photo → <strong>"Copy image address"</strong> (Chrome) or <strong>"Copy Image URL"</strong> (Safari).</li>
+              <li>Paste that link below (it starts with <code>https://lh3.googleusercontent.com/…</code>) — one per line.</li>
+              <li>Repeat for each photo you want to show.</li>
+            </ol>
+            <p class="field-hint"><strong>Note:</strong> the album's shareable link itself (the one you'd send someone, starting with <code>photos.app.goo.gl</code> or <code>photos.google.com</code>) won't work here — it's a page, not an image. Pasting one into your Description or an announcement instead shows a "View Photo Album" link automatically.</p>
+            <textarea id="edit-gallery" name="gallery" rows="5" placeholder="https://lh3.googleusercontent.com/…&#10;https://lh3.googleusercontent.com/…"></textarea>
+          </div>
+          <div class="gallery-edit-grid" id="gallery-edit-preview"></div>
         </div>
 
         <div class="edit-actions">

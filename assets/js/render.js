@@ -1,3 +1,42 @@
+// A bare Google Photos share link (photos.app.goo.gl or photos.google.com)
+// pasted into free text can't be embedded — it's an HTML page, not an image
+// — so it's swapped for a styled "View Photo Album" link instead. Built as
+// DOM text nodes + one anchor rather than innerHTML, so nothing else in the
+// surrounding text is ever interpreted as markup.
+const PHOTO_SHARE_LINK_RE = /https?:\/\/(?:photos\.app\.goo\.gl|photos\.google\.com)\/\S+/gi;
+const TRAILING_PUNCTUATION_RE = /[).,;:!?\]"']+$/;
+
+function renderTextWithPhotoLinks(el, text) {
+  el.innerHTML = "";
+  if (!text) return;
+  const matches = [...text.matchAll(PHOTO_SHARE_LINK_RE)];
+  if (matches.length === 0) {
+    el.textContent = text;
+    return;
+  }
+
+  let cursor = 0;
+  matches.forEach((m) => {
+    const raw = m[0];
+    const trailing = (raw.match(TRAILING_PUNCTUATION_RE) || [""])[0];
+    const url = trailing ? raw.slice(0, -trailing.length) : raw;
+
+    if (m.index > cursor) el.appendChild(document.createTextNode(text.slice(cursor, m.index)));
+
+    const card = document.createElement("a");
+    card.className = "photo-album-card";
+    card.href = url;
+    card.target = "_blank";
+    card.rel = "noopener";
+    card.innerHTML = `${iconSvg("image", 16)} <span>View Photo Album</span> ${iconSvg("external", 13)}`;
+    el.appendChild(card);
+
+    if (trailing) el.appendChild(document.createTextNode(trailing));
+    cursor = m.index + raw.length;
+  });
+  if (cursor < text.length) el.appendChild(document.createTextNode(text.slice(cursor)));
+}
+
 function initialsFor(name) {
   return name
     .split(/\s+/)
@@ -168,7 +207,7 @@ function createEventItem(org, event, opts) {
   if (event.description) {
     const desc = document.createElement("div");
     desc.className = "event-desc";
-    desc.textContent = event.description;
+    renderTextWithPhotoLinks(desc, event.description);
     content.appendChild(desc);
   }
 
@@ -246,7 +285,7 @@ function createAnnouncementItem(org, announcement) {
 
   const body = document.createElement("div");
   body.className = "announce-body";
-  body.textContent = announcement.body;
+  renderTextWithPhotoLinks(body, announcement.body);
 
   item.appendChild(meta);
   item.appendChild(title);

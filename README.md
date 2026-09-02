@@ -68,6 +68,7 @@ If the Cloudflare Worker isn't deployed yet, or an org isn't listed in `editors.
   "donateUrl": "",                       // optional; shows a Donate button on the org page if set
   "supportUrl": "",                      // optional; a "get involved" link (volunteer sign-up, sponsorship page, wish list) shown in the "Support this org" box. If both this and donateUrl are empty, that box falls back to the default collective-level copy and an "Apply to Join" button
   "programs": ["Program One", "Program Two"],
+  "gallery": [],                        // optional array of direct image links for a Photo Gallery section on the profile page. Use direct Google Photos CDN links (https://lh3.googleusercontent.com/...) copied via "Copy image address" on a full-screen photo — NOT the album'''s shareable link (photos.app.goo.gl/... or photos.google.com/...), which is a page and can'''t be embedded. A bare share link pasted into description/announcement/event text is auto-detected and rendered as a "View Photo Album" link instead.
   "events": [
     {
       "id": "unique-id",

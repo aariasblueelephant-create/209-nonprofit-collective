@@ -101,6 +101,11 @@
           <h3><i data-icon="megaphone" data-icon-size="17"></i> Announcements</h3>
           <div class="announce-list" id="org-announcements"></div>
         </div>
+
+        <div id="org-gallery-section" style="margin-top: 48px;" hidden>
+          <h3><i data-icon="image" data-icon-size="17"></i> Photo Gallery</h3>
+          <div class="gallery-grid" id="org-gallery"></div>
+        </div>
       </div>
 
       <div>
@@ -125,6 +130,19 @@
       <div><a href="help.html">Find help</a> · <a href="apply.html">Join the Collective</a> · <a href="edit.html">Member: edit your org</a> · <a href="mailto:contact@aariasblueelephant.org">Contact</a></div>
     </div>
   </footer>
+
+  <dialog id="gallery-lightbox">
+    <button type="button" class="gallery-lightbox-close" id="gallery-lightbox-close" aria-label="Close">
+      <i data-icon="x" data-icon-size="20"></i>
+    </button>
+    <button type="button" class="gallery-lightbox-nav prev" id="gallery-prev" aria-label="Previous photo">
+      <i data-icon="arrowLeft" data-icon-size="20"></i>
+    </button>
+    <img id="gallery-lightbox-img" alt="" />
+    <button type="button" class="gallery-lightbox-nav next" id="gallery-next" aria-label="Next photo">
+      <i data-icon="arrowRight" data-icon-size="20"></i>
+    </button>
+  </dialog>
 
   <script src="assets/js/icons.js" defer></script>
   <script src="assets/js/ui.js" defer></script>
